@@ -40,12 +40,28 @@ void drawEmptySquare(double a)
 void drawArrow(){
 
   //  printf("%lf %lf %lf \n", v.x, v.y, v.z);
+    Vector u = v.unit();
+    Point tip = pos + arrowlength*u;
 
     glColor3f(1.0,1.0,1.0);
-    Point tip = pos + arrowlength*(v.unit() );
     glBegin(GL_LINES);{
         glVertex3f( pos.x, pos.y, pos.z);
         glVertex3f( tip.x, tip.y, tip.z);
+    }glEnd();
+
+    Vector perp = u.perp2d();
+    Point A,B, C, D;
+    A = tip;
+    double AD = arrowlength*0.3;
+    D = tip - AD*u;
+    B = D + perp*AD*0.6;
+    C = D - perp*AD*0.6;
+
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_TRIANGLES);{
+        glVertex3f( A.x, A.y, A.z);
+        glVertex3f( B.x, B.y, B.z);
+        glVertex3f( C.x, C.y, C.z);
     }glEnd();
 }
 
