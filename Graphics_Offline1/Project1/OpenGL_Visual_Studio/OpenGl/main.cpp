@@ -49,7 +49,7 @@ void drawSquare(double a) ///a is halflength;
 	}glEnd();
 }
 
-void drawCylinder1_4(double r, int slices, double h) {
+void drawCylinder1_4_origin(double r, int slices, double h) {
 	Point points[100];
 	int i;
 
@@ -107,42 +107,28 @@ void drawSphere1_8_origin(double radius, int slices, int stacks)
 }
 
 
-void drawCubeInPlace() {
+void drawCube1_3() {
 	double a = max_radius - radius;
-	glColor3f(1, 1, 1);
-
 	glPushMatrix(); {
 		glTranslatef(0, 0, max_radius);
 		drawSquare(a);
-		glTranslatef(0, 0, - 2*max_radius);
+		glTranslatef(0, 0, -2 * max_radius);
 		drawSquare(a);
 	}
 	glPopMatrix();
+}
+
+void drawCube() {
 	
+	drawCube1_3();
 	glPushMatrix(); {
-		glTranslatef(0, -max_radius, 0);
-		glRotatef(90, 1, 0, 0); ///rotate about X axis
-		drawSquare(a);
-	}
-	glPopMatrix();
+		glRotatef(90, 1, 0, 0);
+		drawCube1_3();
+	}glPopMatrix();
 
 	glPushMatrix(); {
-		glTranslatef(0, +max_radius, 0);
-		glRotatef(90, 1, 0, 0); ///rotate about X axis
-		drawSquare(a);
-	}
-	glPopMatrix();
-
-	glPushMatrix(); {
-		glTranslatef(max_radius, 0, 0);
-		glRotatef(90, 0, 1, 0); ///rotate about Y axis
-		drawSquare(a);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(-max_radius, 0, 0);
-		glRotatef(90, 0, 1, 0); ///rotate about Y axis
-		drawSquare(a);
+		glRotatef(90, 0, 1, 0); 
+		drawCube1_3();
 	}
 	glPopMatrix();
 }
@@ -154,7 +140,7 @@ void drawCylinder1_12() {
 	// parallel to Z axis
 	glPushMatrix(); {
 		glTranslatef(a, a, 0);
-		drawCylinder1_4(radius, slices, h);
+		drawCylinder1_4_origin(radius, slices, h);
 	}
 	glPopMatrix();
 }
@@ -221,7 +207,7 @@ void drawSphere() {
 }
 
 void drawStoC() {
-	drawCubeInPlace();
+	drawCube();
 	drawCylinder();
 	drawSphere();
 }
@@ -293,12 +279,12 @@ void specialKeyListener(int key, int x,int y){
 		case GLUT_KEY_HOME:
 			if (radius < max_radius)
 				radius = radius + radsens;
-			printf("%lf \n", radius);
+			//printf("%lf \n", radius);
 			break;
 		case GLUT_KEY_END:
 			if (radius > 0)
 				radius = radius - radsens;
-			printf("%lf \n", radius);
+			//printf("%lf \n", radius);
 			break;
 
 		default:
