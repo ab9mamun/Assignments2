@@ -4,202 +4,92 @@
 
 #include <windows.h>
 #include <glut.h>
+#include "threed.hpp"
 
 #define pi (2*acos(0.0))
+#define RAD(x) (x*pi/180)
 
 double cameraHeight;
 double cameraAngle;
-int drawgrid;
-int drawaxes;
-double angle;
 
-struct point
-{
-	double x,y,z;
-};
+double armAroundY; ///-45 to 45 ---1,2
+double armAroundX; /// 0 to 90 ----q,w
+double elbow; ///0 to 90 ---3, 4
+double palm; // - 45 to 45--- 5,6
+double finger1; //-45 to 45 --7,8
+double finger2; //0 to 90 -- 9,0
+
+double rotsens;
+
 
 
 void drawAxes()
 {
-	if(drawaxes==1)
-	{
-		glColor3f(1.0, 1.0, 1.0);
-		glBegin(GL_LINES);{
-			glVertex3f( 100,0,0);
-			glVertex3f(-100,0,0);
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINES);{
+		glVertex3f( 100,0,0);
+		glVertex3f(-100,0,0);
 
-			glVertex3f(0,-100,0);
-			glVertex3f(0, 100,0);
+		glVertex3f(0,-100,0);
+		glVertex3f(0, 100,0);
 
-			glVertex3f(0,0, 100);
-			glVertex3f(0,0,-100);
-		}glEnd();
-	}
-}
-
-
-void drawGrid()
-{
-	int i;
-	if(drawgrid==1)
-	{
-		glColor3f(0.6, 0.6, 0.6);	//grey
-		glBegin(GL_LINES);{
-			for(i=-8;i<=8;i++){
-
-				if(i==0)
-					continue;	//SKIP the MAIN axes
-
-				//lines parallel to Y-axis
-				glVertex3f(i*10, -90, 0);
-				glVertex3f(i*10,  90, 0);
-
-				//lines parallel to X-axis
-				glVertex3f(-90, i*10, 0);
-				glVertex3f( 90, i*10, 0);
-			}
-		}glEnd();
-	}
-}
-
-void drawSquare(double a)
-{
-    //glColor3f(1.0,0.0,0.0);
-	glBegin(GL_QUADS);{
-		glVertex3f( a, a,2);
-		glVertex3f( a,-a,2);
-		glVertex3f(-a,-a,2);
-		glVertex3f(-a, a,2);
+		glVertex3f(0,0, 100);
+		glVertex3f(0,0,-100);
 	}glEnd();
+	
 }
 
-
-void drawCircle(double radius,int segments)
-{
-    int i;
-    struct point points[100];
-    glColor3f(0.7,0.7,0.7);
-    //generate points
-    for(i=0;i<=segments;i++)
-    {
-        points[i].x=radius*cos(((double)i/(double)segments)*2*pi);
-        points[i].y=radius*sin(((double)i/(double)segments)*2*pi);
-    }
-    //draw segments using generated points
-    for(i=0;i<segments;i++)
-    {
-        glBegin(GL_LINES);
-        {
-			glVertex3f(points[i].x,points[i].y,0);
-			glVertex3f(points[i+1].x,points[i+1].y,0);
-        }
-        glEnd();
-    }
-}
-
-void drawCone(double radius,double height,int segments)
-{
-    int i;
-    double shade;
-    struct point points[100];
-    //generate points
-    for(i=0;i<=segments;i++)
-    {
-        points[i].x=radius*cos(((double)i/(double)segments)*2*pi);
-        points[i].y=radius*sin(((double)i/(double)segments)*2*pi);
-    }
-    //draw triangles using generated points
-    for(i=0;i<segments;i++)
-    {
-        //create shading effect
-        if(i<segments/2)shade=2*(double)i/(double)segments;
-        else shade=2*(1.0-(double)i/(double)segments);
-        glColor3f(shade,shade,shade);
-
-        glBegin(GL_TRIANGLES);
-        {
-            glVertex3f(0,0,height);
-			glVertex3f(points[i].x,points[i].y,0);
-			glVertex3f(points[i+1].x,points[i+1].y,0);
-        }
-        glEnd();
-    }
-}
-
-
-void drawSphere(double radius,int slices,int stacks)
-{
-	struct point points[100][100];
-	int i,j;
-	double h,r;
-	//generate points
-	for(i=0;i<=stacks;i++)
-	{
-		h=radius*sin(((double)i/(double)stacks)*(pi/2));
-		r=radius*cos(((double)i/(double)stacks)*(pi/2));
-		for(j=0;j<=slices;j++)
-		{
-			points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
-			points[i][j].y=r*sin(((double)j/(double)slices)*2*pi);
-			points[i][j].z=h;
-		}
-	}
-	//draw quads using generated points
-	for(i=0;i<stacks;i++)
-	{
-        glColor3f((double)i/(double)stacks,(double)i/(double)stacks,(double)i/(double)stacks);
-		for(j=0;j<slices;j++)
-		{
-			glBegin(GL_QUADS);{
-			    //upper hemisphere
-				glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
-				glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
-				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
-				glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
-                //lower hemisphere
-                glVertex3f(points[i][j].x,points[i][j].y,-points[i][j].z);
-				glVertex3f(points[i][j+1].x,points[i][j+1].y,-points[i][j+1].z);
-				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,-points[i+1][j+1].z);
-				glVertex3f(points[i+1][j].x,points[i+1][j].y,-points[i+1][j].z);
-			}glEnd();
-		}
-	}
-}
-
-
-void drawSS()
-{
-    glColor3f(1,0,0);
-    drawSquare(20);
-
-    glRotatef(angle,0,0,1);
-    glTranslatef(110,0,0);
-    glRotatef(2*angle,0,0,1);
-    glColor3f(0,1,0);
-    drawSquare(15);
-
-    glPushMatrix();
-    {
-        glRotatef(angle,0,0,1);
-        glTranslatef(60,0,0);
-        glRotatef(2*angle,0,0,1);
-        glColor3f(0,0,1);
-        drawSquare(10);
-    }
-    glPopMatrix();
-
-    glRotatef(3*angle,0,0,1);
-    glTranslatef(40,0,0);
-    glRotatef(4*angle,0,0,1);
-    glColor3f(1,1,0);
-    drawSquare(5);
-}
 
 void keyboardListener(unsigned char key, int x,int y){
 	switch(key){
 
 		case '1':
-			drawgrid=1-drawgrid;
+			if (armAroundY < 45)
+				armAroundY += rotsens;
+			break;
+		case '2':
+			if (armAroundY > -45)
+				armAroundY -= rotsens;
+			break;
+		case '3':
+			if (elbow < 90)
+				elbow += rotsens;
+			break;
+		case '4':
+			if (elbow > 0)
+				elbow -= rotsens;
+			break;
+		case '5':
+			if (palm < 45)
+				palm += rotsens;
+			break;
+		case '6':
+			if (palm > -45)
+				palm -= rotsens;
+			break;
+		case '7':
+			if (finger1 < 45)
+				finger1 += rotsens;
+			break;
+		case '8':
+			if (finger1 > - 45)
+				finger1 -= rotsens;
+			break;
+		case '9':
+			if (finger2 < 90)
+				finger2 += rotsens;
+			break;
+		case '0':
+			if (finger2 > 0)
+				finger2 -= rotsens;
+			break;
+		case 'q':
+			if (armAroundX < 90)
+				armAroundX += rotsens;
+			break;
+		case 'w':
+			if (armAroundX > 0)
+				armAroundX -= rotsens;
 			break;
 
 		default:
@@ -247,7 +137,6 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 	switch(button){
 		case GLUT_LEFT_BUTTON:
 			if(state == GLUT_DOWN){		// 2 times?? in ONE click? -- solution is checking DOWN or UP
-				drawaxes=1-drawaxes;
 			}
 			break;
 
@@ -266,13 +155,31 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 
 
+
+
+
+void drawRoboticArm() {
+
+	
+	glTranslatef(25*sin(RAD(armAroundY)), 25*sin(RAD(armAroundX)), -25*cos(RAD(armAroundY))*cos(RAD(armAroundX)));
+	glRotatef(-armAroundY, 0, 1, 0);
+	glRotatef(-armAroundX, 1, 0, 0);
+	glScalef(10, 10, 25);
+	glutWireSphere(1, 10, 8); //arm
+	
+	//glutWireSphere(0.8, 10, 8);
+	
+
+}
+
+
 void display(){
 
 	//clear the display
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0,0,0,0);	//color black
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	/********************
 	/ set-up camera here
 	********************/
@@ -288,8 +195,8 @@ void display(){
 	//3. Which direction is the camera's UP direction?
 
 	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
-	//gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
-	gluLookAt(0,0,200,	0,0,0,	0,1,0);
+	gluLookAt(120*cos(cameraAngle), 120*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
+	//gluLookAt(0,0,200,	0,0,0,	0,1,0);
 
 
 	//again select MODEL-VIEW
@@ -302,19 +209,7 @@ void display(){
 	//add objects
 
 	drawAxes();
-	drawGrid();
-
-    //glColor3f(1,0,0);
-    //drawSquare(10);
-
-    drawSS();
-
-    //drawCircle(30,24);
-
-    //drawCone(20,50,24);
-
-	//drawSphere(30,24,20);
-
+	drawRoboticArm();
 
 
 
@@ -324,18 +219,24 @@ void display(){
 
 
 void animate(){
-	angle+=0.05;
 	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
 
 void init(){
 	//codes for initialization
-	drawgrid=0;
-	drawaxes=1;
-	cameraHeight=150.0;
-	cameraAngle=1.0;
-	angle=0;
+	
+	cameraHeight=-30;
+	cameraAngle=0.5;
+
+	armAroundY = 0; ///-45 to 45 ---1,2
+	armAroundX = 0; /// 0 to 90 ----q,w
+	elbow = 0; ///0 to 90 ---3, 4
+	palm = 0; // - 45 to 45--- 5,6
+	finger1 = 0; //-45 to 45 --7,8
+	finger2 = 0; //0 to 90 -- 9,0
+
+	rotsens = 3;
 
 	//clear the screen
 	glClearColor(0,0,0,0);
