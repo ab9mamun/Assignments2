@@ -14,21 +14,105 @@ Vector u, r, l;
 double movsens; ///move sensitivity
 double rotsens; //rotate sensitivity;
 
+double max_radius; ///max_radius of the sphere
+double radius; /// current radius of the sphere
+double radsens; ///radius sensitivity to home and end buttons.
+
+
 
 
 void drawAxes()
 {
 	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINES);{
-		glVertex3f( 100,0,0);
-		glVertex3f(-100,0,0);
+	glBegin(GL_LINES); {
+		glVertex3f(100, 0, 0);
+		glVertex3f(-100, 0, 0);
 
-		glVertex3f(0,-100,0);
-		glVertex3f(0, 100,0);
+		glVertex3f(0, -100, 0);
+		glVertex3f(0, 100, 0);
 
-		glVertex3f(0,0, 100);
-		glVertex3f(0,0,-100);
+		glVertex3f(0, 0, 100);
+		glVertex3f(0, 0, -100);
 	}glEnd();
+}
+
+void drawSquare(double a) ///a is halflength;
+{
+	glColor3f(1.0,1.0,1.0);
+	glBegin(GL_QUADS); {
+		glVertex3f(a, a, 0);
+		glVertex3f(a, -a, 0);
+		glVertex3f(-a, -a, 0);
+		glVertex3f(-a, a, 0);
+	}glEnd();
+}
+
+void drawCylinder1_4(double r, int slices, double h) {
+	Point points[100];
+	int i;
+
+	//generate points
+	for (i = 0;i <= slices / 4;i++){
+		points[i].x = r * cos(((double)i / (double)slices) * 2 * pi);
+		points[i].y = r * sin(((double)i / (double)slices) * 2 * pi);
+	}
+
+	//draw quads using generated points
+	for (i = 0;i < slices / 4;i++){
+		glColor3f(0, (i + slices / 3.0) / (slices + slices / 3.0), 0);
+		glBegin(GL_QUADS); {
+			glVertex3f(points[i].x, points[i].y, 0);
+			glVertex3f(points[i].x, points[i].y, h);
+			glVertex3f(points[i + 1].x, points[i + 1].y, h);
+			glVertex3f(points[i + 1].x, points[i + 1].y, 0);
+		}glEnd();
+	}
+}
+
+void drawSphere1_8(double radius, int slices, int stacks)
+{
+	Point points[100][100];
+	int i, j;
+	double h, r;
+	//generate points
+	for (i = 0;i <= stacks;i++)
+	{
+		h = radius * sin(((double)i / (double)stacks)*(pi / 2));
+		r = radius * cos(((double)i / (double)stacks)*(pi / 2));
+		for (j = 0;j <= slices/4;j++)
+		{
+			points[i][j].x = r * cos(((double)j / (double)slices) * 2 * pi);
+			points[i][j].y = r * sin(((double)j / (double)slices) * 2 * pi);
+			points[i][j].z = h;
+		}
+	}
+	//draw quads using generated points
+	for (i = 0;i<stacks;i++)
+	{
+		glColor3f(( i+ stacks/4.0) / (stacks+stacks/4.0), 0, 0);
+		for (j = 0;j<slices/4;j++)
+		{
+			glBegin(GL_QUADS); {
+				//upper hemisphere
+				glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+				glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+				glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+				glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+			}glEnd();
+		}
+	}
+}
+
+/*
+drawCubeInPlace() {
+
+}
+*/
+
+void drawStoC() {
+	//drawCubeInPlace();
+	//drawSquare(30);
+	//drawCylinder1_4(30, 80, 30);
 }
 
 
@@ -96,8 +180,14 @@ void specialKeyListener(int key, int x,int y){
 			break;
 
 		case GLUT_KEY_HOME:
+			if (radius < max_radius)
+				radius = radius + radsens;
+			printf("%lf \n", radius);
 			break;
 		case GLUT_KEY_END:
+			if (radius > 0)
+				radius = radius - radsens;
+			printf("%lf \n", radius);
 			break;
 
 		default:
@@ -165,6 +255,8 @@ void display(){
 	//add objects
 	drawAxes();
 
+	drawStoC(); ///sphere to cube
+
 
 
 	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
@@ -188,6 +280,10 @@ void init(){
 
 	movsens = 2;
 	rotsens = 3;
+
+	max_radius = 50;
+	radius = 10;
+	radsens = 2;
 
 	//clear the screen
 	glClearColor(0,0,0,0);
