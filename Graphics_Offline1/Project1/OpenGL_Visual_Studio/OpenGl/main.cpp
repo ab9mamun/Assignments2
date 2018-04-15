@@ -236,6 +236,7 @@ void drawCylindersInPlace() {
 	
 }
 
+
 void drawSpheresInPlace() {
 	double a = max_radius - radius;
 	//upper hemisphere
@@ -244,12 +245,38 @@ void drawSpheresInPlace() {
 		drawSphere1_8(radius, slices, slices);
 	}
 	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a, a, a);
+		glRotatef(90, 0, 0, 1);
+		drawSphere1_8(radius, slices, slices);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a,-a, a);
+		glRotatef(180, 0, 0, 1);
+		drawSphere1_8(radius, slices, slices);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(a, -a, a);
+		glRotatef(90, 0, 0, -1);
+		drawSphere1_8(radius, slices, slices);
+	}
+	glPopMatrix();
+
+
 }
 
 void drawStoC() {
 	drawCubeInPlace();
 	drawCylindersInPlace();
 	drawSpheresInPlace();
+	
+	glPushMatrix(); {
+		glRotatef(180, 1, 1, 0);
+		drawSpheresInPlace();  //lower hemisphere
+	}
+	glPopMatrix();
 	
 }
 
