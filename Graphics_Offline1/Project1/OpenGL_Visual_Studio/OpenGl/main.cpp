@@ -71,7 +71,7 @@ void drawCylinder1_4(double r, int slices, double h) {
 	}
 }
 
-void drawSphere1_8(double radius, int slices, int stacks)
+void drawSphere1_8_origin(double radius, int slices, int stacks)
 {
 	Point points[100][100];
 	int i, j;
@@ -236,45 +236,39 @@ void drawCylindersInPlace() {
 	
 }
 
-
-void drawSpheresInPlace() {
+void drawSphere1_8() {
 	double a = max_radius - radius;
-	//upper hemisphere
 	glPushMatrix(); {
 		glTranslatef(a, a, a);
-		drawSphere1_8(radius, slices, slices);
-	}
-	glPopMatrix();
+		drawSphere1_8_origin(radius, slices, slices);
+	}glPopMatrix();
+}
+void drawSphere1_4() {
+	
+	drawSphere1_8();
 	glPushMatrix(); {
-		glTranslatef(-a, a, a);
 		glRotatef(90, 0, 0, 1);
-		drawSphere1_8(radius, slices, slices);
-	}
-	glPopMatrix();
+		drawSphere1_8();
+	}glPopMatrix();
+}
+void drawSphere1_2() {
+	drawSphere1_4();
 	glPushMatrix(); {
-		glTranslatef(-a,-a, a);
 		glRotatef(180, 0, 0, 1);
-		drawSphere1_8(radius, slices, slices);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(a, -a, a);
-		glRotatef(90, 0, 0, -1);
-		drawSphere1_8(radius, slices, slices);
-	}
-	glPopMatrix();
-
+		drawSphere1_4();
+	}glPopMatrix();
 
 }
 
 void drawStoC() {
 	drawCubeInPlace();
 	drawCylindersInPlace();
-	drawSpheresInPlace();
-	
+
+	drawSphere1_2(); 	//upper hemisphere
+
 	glPushMatrix(); {
-		glRotatef(180, 1, 1, 0);
-		drawSpheresInPlace();  //lower hemisphere
+		glRotatef(180, 0, 1, 0);
+		drawSphere1_2();  //lower hemisphere
 	}
 	glPopMatrix();
 	
