@@ -18,6 +18,8 @@ double max_radius; ///max_radius of the sphere
 double radius; /// current radius of the sphere
 double radsens; ///radius sensitivity to home and end buttons.
 
+int slices;
+
 
 
 
@@ -59,12 +61,12 @@ void drawCylinder1_4(double r, int slices, double h) {
 
 	//draw quads using generated points
 	for (i = 0;i < slices / 4;i++){
-		glColor3f(0, (i + slices / 3.0) / (slices + slices / 3.0), 0);
+		glColor3f(0, (i + slices / 2.0) / (slices + slices / 2.0), 0);
 		glBegin(GL_QUADS); {
-			glVertex3f(points[i].x, points[i].y, 0);
-			glVertex3f(points[i].x, points[i].y, h);
-			glVertex3f(points[i + 1].x, points[i + 1].y, h);
-			glVertex3f(points[i + 1].x, points[i + 1].y, 0);
+			glVertex3f(points[i].x, points[i].y, -h/2);
+			glVertex3f(points[i].x, points[i].y, h/2);
+			glVertex3f(points[i + 1].x, points[i + 1].y, h/2);
+			glVertex3f(points[i + 1].x, points[i + 1].y, -h/2);
 		}glEnd();
 	}
 }
@@ -103,15 +105,139 @@ void drawSphere1_8(double radius, int slices, int stacks)
 	}
 }
 
-/*
-drawCubeInPlace() {
 
+void drawCubeInPlace() {
+	double a = max_radius - radius;
+	glColor3f(1, 1, 1);
+
+	glPushMatrix(); {
+		glTranslatef(0, 0, max_radius);
+		drawSquare(a);
+		glTranslatef(0, 0, - 2*max_radius);
+		drawSquare(a);
+	}
+	glPopMatrix();
+	
+	glPushMatrix(); {
+		glTranslatef(0, -max_radius, 0);
+		glRotatef(90, 1, 0, 0); ///rotate about X axis
+		drawSquare(a);
+	}
+	glPopMatrix();
+
+	glPushMatrix(); {
+		glTranslatef(0, +max_radius, 0);
+		glRotatef(90, 1, 0, 0); ///rotate about X axis
+		drawSquare(a);
+	}
+	glPopMatrix();
+
+	glPushMatrix(); {
+		glTranslatef(max_radius, 0, 0);
+		glRotatef(90, 0, 1, 0); ///rotate about Y axis
+		drawSquare(a);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-max_radius, 0, 0);
+		glRotatef(90, 0, 1, 0); ///rotate about Y axis
+		drawSquare(a);
+	}
+	glPopMatrix();
 }
-*/
+
+void drawCylindersInPlace() {
+	double a = max_radius - radius;
+	double h = 2 * a;
+	
+	// parallel to Z axis
+	glPushMatrix(); {
+		glTranslatef(a, a, 0);
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a, a, 0);
+		glRotatef(90, 0, 0, 1);
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a, -a, 0);
+		glRotatef(180, 0, 0, 1);
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(a, -a, 0);
+		glRotatef(90, 0, 0, -1);
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	/////////Parallel to X axis
+
+	glPushMatrix(); {
+		glTranslatef(0, a, -a);
+		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(0, a, a);
+		glRotatef(90, 1, 0, 0);
+		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(0, -a, a);
+		glRotatef(180, 1, 0, 0);
+		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(0, -a, -a);
+		glRotatef(90, -1, 0, 0);
+		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+
+	// parallel to Y axis
+	glPushMatrix(); {
+		glTranslatef(a, 0, a);
+		glRotatef(90, 1, 0, 0);   // rotate about X axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(a, 0, -a);
+		glRotatef(90, 0, 1, 0);
+		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a, 0,-a);
+		glRotatef(180, 0, 1, 0);
+		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	glPushMatrix(); {
+		glTranslatef(-a, 0, a);
+		glRotatef(90, 0, -1, 0);
+		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
+		drawCylinder1_4(radius, slices, h);
+	}
+	glPopMatrix();
+	
+}
 
 void drawStoC() {
-	//drawCubeInPlace();
-	//drawSquare(30);
+	drawCubeInPlace();
+	drawCylindersInPlace();
 	//drawCylinder1_4(30, 80, 30);
 }
 
@@ -281,9 +407,11 @@ void init(){
 	movsens = 2;
 	rotsens = 3;
 
-	max_radius = 50;
-	radius = 10;
+	max_radius = 40;
+	radius = 16;
 	radsens = 2;
+	
+	slices = 80;
 
 	//clear the screen
 	glClearColor(0,0,0,0);
