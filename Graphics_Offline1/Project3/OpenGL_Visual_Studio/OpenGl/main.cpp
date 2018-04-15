@@ -161,13 +161,33 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 void drawRoboticArm() {
 
 	
-	glTranslatef(25*sin(RAD(armAroundY)), 25*sin(RAD(armAroundX)), -25*cos(RAD(armAroundY))*cos(RAD(armAroundX)));
 	glRotatef(-armAroundY, 0, 1, 0);
 	glRotatef(-armAroundX, 1, 0, 0);
-	glScalef(10, 10, 25);
-	glutWireSphere(1, 10, 8); //arm
+	glTranslatef(0, 0, -25);
 	
-	//glutWireSphere(0.8, 10, 8);
+	glPushMatrix(); {
+		glScalef(10, 10, 30);
+		glutWireSphere(1, 10, 8); //arm
+	}
+	glPopMatrix();
+
+	glTranslatef(0, 0, -1.6 * 30);
+	glPushMatrix(); {
+		glScalef(10, 10, 30);
+		glutWireSphere(0.6, 10, 8); //elbow
+	} glPopMatrix();
+
+	glTranslatef(0, 0, -0.6 * 30);
+	glPushMatrix(); {
+		glScalef(10, 10, 10);
+		glBegin(GL_TRIANGLES); {
+			glVertex3f(0, 0, 0);
+			glVertex3f(1, 0, -1);
+			glVertex3f(-1, 0, -1);
+		}
+		glEnd();
+	}
+	glPopMatrix();
 	
 
 }
@@ -195,7 +215,7 @@ void display(){
 	//3. Which direction is the camera's UP direction?
 
 	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
-	gluLookAt(120*cos(cameraAngle), 120*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
+	gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
 	//gluLookAt(0,0,200,	0,0,0,	0,1,0);
 
 
