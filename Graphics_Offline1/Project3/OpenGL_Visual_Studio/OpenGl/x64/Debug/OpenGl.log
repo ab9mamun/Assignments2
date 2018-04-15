@@ -1,0 +1,33 @@
+﻿  main.cpp
+main.obj : error LNK2019: unresolved external symbol __imp_glBegin referenced in function "void __cdecl drawAxes(void)" (?drawAxes@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glClear referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glClearColor referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glColor3f referenced in function "void __cdecl drawAxes(void)" (?drawAxes@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glEnable referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glEnd referenced in function "void __cdecl drawAxes(void)" (?drawAxes@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glLoadIdentity referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glMatrixMode referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glPopMatrix referenced in function "void __cdecl drawSS(void)" (?drawSS@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glPushMatrix referenced in function "void __cdecl drawSS(void)" (?drawSS@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glRotatef referenced in function "void __cdecl drawSS(void)" (?drawSS@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glTranslatef referenced in function "void __cdecl drawSS(void)" (?drawSS@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glVertex3f referenced in function "void __cdecl drawAxes(void)" (?drawAxes@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol gluPerspective referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol gluLookAt referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glutInitWithExit referenced in function glutInit_ATEXIT_HACK
+main.obj : error LNK2019: unresolved external symbol __imp_glutInitDisplayMode referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutInitWindowPosition referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutInitWindowSize referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutMainLoop referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp___glutCreateWindowWithExit referenced in function glutCreateWindow_ATEXIT_HACK
+main.obj : error LNK2019: unresolved external symbol __imp_glutPostRedisplay referenced in function "void __cdecl animate(void)" (?animate@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glutSwapBuffers referenced in function "void __cdecl display(void)" (?display@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glutDisplayFunc referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutKeyboardFunc referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutMouseFunc referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutIdleFunc referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp_glutSpecialFunc referenced in function main
+F:\_git\Assignments2\Graphics_Offline1\Project1\OpenGL_Visual_Studio\OpenGl\OpenGL\lib\opengl32.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+F:\_git\Assignments2\Graphics_Offline1\Project1\OpenGL_Visual_Studio\OpenGl\OpenGL\lib\glu32.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+F:\_git\Assignments2\Graphics_Offline1\Project1\OpenGL_Visual_Studio\OpenGl\OpenGL\lib\glut32.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+F:\_git\Assignments2\Graphics_Offline1\Project1\OpenGL_Visual_Studio\x64\Debug\OpenGl.exe : fatal error LNK1120: 28 unresolved externals
