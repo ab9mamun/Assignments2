@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1523604046 source:f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\main.cpp
+1523604880 source:f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\main.cpp
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
@@ -12,7 +12,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1523604082 f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\threed.hpp
+1523789336 f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\threed.hpp
 	<cstdio>
 	<cmath>
 
