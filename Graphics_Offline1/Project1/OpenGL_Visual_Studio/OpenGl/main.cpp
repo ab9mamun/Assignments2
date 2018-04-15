@@ -147,94 +147,45 @@ void drawCubeInPlace() {
 	glPopMatrix();
 }
 
-void drawCylindersInPlace() {
+
+void drawCylinder1_12() {
 	double a = max_radius - radius;
 	double h = 2 * a;
-	
 	// parallel to Z axis
 	glPushMatrix(); {
 		glTranslatef(a, a, 0);
 		drawCylinder1_4(radius, slices, h);
 	}
 	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(-a, a, 0);
-		glRotatef(90, 0, 0, 1);
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(-a, -a, 0);
-		glRotatef(180, 0, 0, 1);
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(a, -a, 0);
-		glRotatef(90, 0, 0, -1);
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	/////////Parallel to X axis
-
-	glPushMatrix(); {
-		glTranslatef(0, a, -a);
-		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(0, a, a);
-		glRotatef(90, 1, 0, 0);
-		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(0, -a, a);
-		glRotatef(180, 1, 0, 0);
-		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(0, -a, -a);
-		glRotatef(90, -1, 0, 0);
-		glRotatef(90, 0, 1, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-
-	// parallel to Y axis
-	glPushMatrix(); {
-		glTranslatef(a, 0, a);
-		glRotatef(90, 1, 0, 0);   // rotate about X axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(a, 0, -a);
-		glRotatef(90, 0, 1, 0);
-		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(-a, 0,-a);
-		glRotatef(180, 0, 1, 0);
-		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	glPushMatrix(); {
-		glTranslatef(-a, 0, a);
-		glRotatef(90, 0, -1, 0);
-		glRotatef(90, 1, 0, 0);   // rotate about Y axis.
-		drawCylinder1_4(radius, slices, h);
-	}
-	glPopMatrix();
-	
 }
+
+void drawCylinder1_6() {
+	drawCylinder1_12();
+	glPushMatrix(); {
+		glRotatef(90, 0, 0, 1);
+		drawCylinder1_12();
+	}glPopMatrix();
+}
+void drawCylinder1_2() {
+	drawCylinder1_6();
+	glPushMatrix(); {
+		glRotatef(90, 1, 0, 0); //about X
+		drawCylinder1_6();
+	}glPopMatrix();
+	glPushMatrix(); {
+		glRotatef(90, 0, 1, 0); //about Y
+		drawCylinder1_6();
+	}glPopMatrix();
+}
+
+void drawCylinder() {
+	drawCylinder1_2();
+	glPushMatrix(); {
+		glRotatef(180, 1, 0, 0);
+		drawCylinder1_2();
+	}glPopMatrix();
+}
+
 
 void drawSphere1_8() {
 	double a = max_radius - radius;
@@ -260,18 +211,19 @@ void drawSphere1_2() {
 
 }
 
-void drawStoC() {
-	drawCubeInPlace();
-	drawCylindersInPlace();
-
+void drawSphere() {
 	drawSphere1_2(); 	//upper hemisphere
-
 	glPushMatrix(); {
-		glRotatef(180, 0, 1, 0);
+		glRotatef(180, 1, 0, 0);
 		drawSphere1_2();  //lower hemisphere
 	}
 	glPopMatrix();
-	
+}
+
+void drawStoC() {
+	drawCubeInPlace();
+	drawCylinder();
+	drawSphere();
 }
 
 
