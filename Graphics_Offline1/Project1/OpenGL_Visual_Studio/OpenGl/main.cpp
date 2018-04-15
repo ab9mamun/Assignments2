@@ -54,13 +54,13 @@ void drawCylinder1_4(double r, int slices, double h) {
 	int i;
 
 	//generate points
-	for (i = 0;i <= slices / 4;i++){
-		points[i].x = r * cos(((double)i / (double)slices) * 2 * pi);
-		points[i].y = r * sin(((double)i / (double)slices) * 2 * pi);
+	for (i = 0;i <= slices ; i++){
+		points[i].x = r * cos(pi / 2 * i / slices);
+		points[i].y = r * sin(pi / 2 * i / slices);
 	}
 
 	//draw quads using generated points
-	for (i = 0;i < slices / 4;i++){
+	for (i = 0;i < slices ;i++){
 		glColor3f(0, (i + slices / 2.0) / (slices + slices / 2.0), 0);
 		glBegin(GL_QUADS); {
 			glVertex3f(points[i].x, points[i].y, -h/2);
@@ -79,12 +79,13 @@ void drawSphere1_8(double radius, int slices, int stacks)
 	//generate points
 	for (i = 0;i <= stacks;i++)
 	{
-		h = radius * sin(((double)i / (double)stacks)*(pi / 2));
-		r = radius * cos(((double)i / (double)stacks)*(pi / 2));
-		for (j = 0;j <= slices/4;j++)
+		h = radius * sin(pi / 2 * i / stacks);
+		r = radius * cos(pi / 2 * i / stacks);
+
+		for (j = 0;j <= slices ;j++)
 		{
-			points[i][j].x = r * cos(((double)j / (double)slices) * 2 * pi);
-			points[i][j].y = r * sin(((double)j / (double)slices) * 2 * pi);
+			points[i][j].x = r * cos(pi / 2 * j /slices);
+			points[i][j].y = r * sin(pi / 2 * j / slices);
 			points[i][j].z = h;
 		}
 	}
@@ -92,7 +93,7 @@ void drawSphere1_8(double radius, int slices, int stacks)
 	for (i = 0;i<stacks;i++)
 	{
 		glColor3f(( i+ stacks/4.0) / (stacks+stacks/4.0), 0, 0);
-		for (j = 0;j<slices/4;j++)
+		for (j = 0;j<slices; j++)
 		{
 			glBegin(GL_QUADS); {
 				//upper hemisphere
@@ -235,10 +236,21 @@ void drawCylindersInPlace() {
 	
 }
 
+void drawSpheresInPlace() {
+	double a = max_radius - radius;
+	//upper hemisphere
+	glPushMatrix(); {
+		glTranslatef(a, a, a);
+		drawSphere1_8(radius, slices, slices);
+	}
+	glPopMatrix();
+}
+
 void drawStoC() {
 	drawCubeInPlace();
 	drawCylindersInPlace();
-	//drawCylinder1_4(30, 80, 30);
+	drawSpheresInPlace();
+	
 }
 
 
@@ -411,7 +423,7 @@ void init(){
 	radius = 16;
 	radsens = 2;
 	
-	slices = 80;
+	slices = 90;
 
 	//clear the screen
 	glClearColor(0,0,0,0);
