@@ -180,14 +180,26 @@ void drawRoboticArm() {
 	glTranslatef(0, 0, -0.6 * 30);
 	glPushMatrix(); {
 		glScalef(10, 10, 10);
-		glBegin(GL_TRIANGLES); {
+		glBegin(GL_TRIANGLES); {  //palm
 			glVertex3f(0, 0, 0);
-			glVertex3f(1, 0, -1);
-			glVertex3f(-1, 0, -1);
+			glVertex3f(0, 0.7, -1);
+			glVertex3f(0, -0.7, -1);
 		}
 		glEnd();
 	}
 	glPopMatrix();
+	
+	glPushMatrix(); {
+		glTranslatef(0, -0.7 * 10, -10 - 0.3 * 30);
+		glScalef(10, 10, 30);
+		glutWireSphere(0.3, 5, 4);  //finger1
+	}glPopMatrix();
+	
+	glPushMatrix(); {
+		glTranslatef(0, +0.7 * 10, -10 - 0.3 * 30);
+		glScalef(10, 10, 30);
+		glutWireSphere(0.3, 5, 4);  //finger2
+	}glPopMatrix();
 	
 
 }
