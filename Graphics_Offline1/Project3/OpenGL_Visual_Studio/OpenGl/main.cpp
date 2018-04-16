@@ -160,9 +160,10 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 void drawRoboticArm() {
 
+	glColor3f(1.0, 1.0, 1.0);
 	
-	glRotatef(-armAroundY, 0, 1, 0);
 	glRotatef(-armAroundX, 1, 0, 0);
+	glRotatef(-armAroundY, 0, 1, 0);
 	glTranslatef(0, 0, -25);
 	
 	glPushMatrix(); {
