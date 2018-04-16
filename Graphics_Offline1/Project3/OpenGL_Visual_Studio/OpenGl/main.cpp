@@ -171,13 +171,16 @@ void drawRoboticArm() {
 	}
 	glPopMatrix();
 
-	glTranslatef(0, 0, -1.6 * 30);
+	glTranslatef(0, 0, -1 * 30);
+	glRotatef(-elbow, 0, 1, 0);
+	glTranslatef(0, 0, -0.6 * 30);
 	glPushMatrix(); {
 		glScalef(10, 10, 30);
 		glutWireSphere(0.6, 10, 8); //elbow
 	} glPopMatrix();
 
 	glTranslatef(0, 0, -0.6 * 30);
+	glRotatef(-palm, 0, 0, 1);
 	glPushMatrix(); {
 		glScalef(10, 10, 10);
 		glBegin(GL_TRIANGLES); {  //palm
@@ -190,13 +193,17 @@ void drawRoboticArm() {
 	glPopMatrix();
 	
 	glPushMatrix(); {
-		glTranslatef(0, -0.7 * 10, -10 - 0.3 * 30);
+		glTranslatef(0, -0.7 * 10, -10);
+		glRotatef(-finger1, 0, 0, 1);
+		glTranslatef(0, 0, - 0.3 * 30);
 		glScalef(10, 10, 30);
 		glutWireSphere(0.3, 5, 4);  //finger1
 	}glPopMatrix();
 	
 	glPushMatrix(); {
-		glTranslatef(0, +0.7 * 10, -10 - 0.3 * 30);
+		glTranslatef(0, 0.7 * 10, -10);
+		glRotatef(-finger2, 0, 1, 0);
+		glTranslatef(0, 0, -0.3 * 30);
 		glScalef(10, 10, 30);
 		glutWireSphere(0.3, 5, 4);  //finger2
 	}glPopMatrix();
@@ -227,7 +234,7 @@ void display(){
 	//3. Which direction is the camera's UP direction?
 
 	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
-	gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
+	gluLookAt(175*cos(cameraAngle), 175*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
 	//gluLookAt(0,0,200,	0,0,0,	0,1,0);
 
 
@@ -258,7 +265,7 @@ void animate(){
 void init(){
 	//codes for initialization
 	
-	cameraHeight=-30;
+	cameraHeight=-50;
 	cameraAngle=0.5;
 
 	armAroundY = 0; ///-45 to 45 ---1,2
