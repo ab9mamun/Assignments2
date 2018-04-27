@@ -26,7 +26,18 @@ class IgTracker:
     #value
     def __init__(self, _type):
         self.type = _type
+        self.value = None
+        self.count = None
 
+
+class DecisionStump:
+    #igs
+    #best
+    #feature_index
+    def __init__(self, igs, best, feature_index):
+        self.igs = igs
+        self.best = best
+        self.feature_index = feature_index
 
 def br():
     print('=================================================')
@@ -153,7 +164,20 @@ def getIgTracker(train, feature_index):
         return getIgTrackerNum(train, feature_index)
 
 def decision_stump(train):
-    pass
+    entropy = 22
+    ig = None
+    igs = []
+    feature_index = -1
+    for i in range(len(header) - 1):
+        it_i = getIgTracker(train, i)
+        igs.append(it_i)
+        if it_i.entropy < entropy:
+            ig = it_i
+            entropy = it_i.entropy
+            feature_index = i
+
+    return DecisionStump(igs, ig, feature_index)
+
 
 def init():
     #declare globals
@@ -206,10 +230,16 @@ def init():
         ndata.pop(j)
         nlength -= 1
 
-    train_data = ydata[:int(ylength*2/3)] + sel_ndata[:int(ylength*2/3)]
-    test_data = ydata[int(ylength*2/3):] + sel_ndata[int(ylength * 2 / 3):]
+    train_data = ydata[:int(ylength*4/5)] + sel_ndata[:int(ylength*4/5)]
+    test_data = ydata[int(ylength*4/5):] + sel_ndata[int(ylength * 4 / 5):]
 
     random.shuffle(train_data)
+    # for row in train_data:
+    #     if row.x[2] == 'married':
+    #         row.y = 'yes'
+    #     else:
+    #         row.y = 'no'
+
     random.shuffle(test_data)
     print('Dataset created. Number of datapoints:', len(train_data) + len(test_data))
     print('Train data: ', len(train_data), 'Test data:', len(test_data))
@@ -218,17 +248,8 @@ def init():
 
 def main():
     init()
-    entropy = 22
-    ig = None
-    feature = -1
-    for i in range(len(header) -1):
-        it_i = getIgTracker(train_data, i)
-        if it_i.entropy < entropy:
-            ig = it_i
-            feature = i
-
-    print(header[feature], ig.value, ig.ans)
-
+    dc = decision_stump(train_data)
+    print(header[dc.feature_index], dc.best.entropy, dc.best.value, dc.best.ans)
 
 if __name__ == "__main__":
     main()
