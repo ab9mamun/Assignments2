@@ -6,6 +6,7 @@ import numpy.random as rand
 
 train_data = []
 test_data = []
+scores = {}
 
 class Row:
     #x: [] features
@@ -118,8 +119,8 @@ def init():
         ndata.pop(j)
         nlength -= 1
 
-    train_data = ydata[:3500] + sel_ndata[:3500]
-    test_data = ydata[3500:] + sel_ndata[3500:]
+    train_data = ydata + sel_ndata
+   # test_data = ydata[3500:] + sel_ndata[3500:]
 
     random.shuffle(train_data)
     # for row in train_data:
@@ -128,10 +129,10 @@ def init():
     #     else:
     #         row.y = 'no'
 
-    random.shuffle(test_data)
-    print('Dataset created. Number of datapoints:', len(train_data) + len(test_data))
-    print('Train data: ', len(train_data), 'Test data:', len(test_data))
-    print('Yes/No counter:', yncounterAll(train_data), yncounterAll(test_data))
+   # random.shuffle(test_data)
+    print('Dataset created. Number of datapoints:', len(train_data) )# + len(test_data))
+   # print('Train data: ', len(train_data), 'Test data:', len(test_data))
+    print('Yes/No counter:', yncounterAll(train_data) ) #, yncounterAll(test_data))
     br()
 
 def getIgTrackerNum(train, feature_index):
@@ -249,21 +250,7 @@ def decision_stump(train):
 
 def resample(dataset, w):
     n = len(w)
-    cum_w = [0]*n
-    cum_w[0] = w[0]
-    for i in range(1,n):
-        cum_w[i] = cum_w[i-1]+w[i]
-    tempdata = []
-    for i in range(n):
-        u = rand.uniform(0, 1)
-        j = 0
-        while j < n:
-            if u < cum_w[j]:
-                break
-            else:
-                j+=1
-        tempdata.append(dataset[j])
-
+    tempdata =  random.choices(dataset, w, k= n)
     return tempdata
 
 def hypo_result(dc, row):
@@ -375,6 +362,7 @@ def simpletest(hypothesis, val):
 
 
 def k_fold(train, k):
+    global scores
     n = len(train)
     for boost in [1, 5, 10, 20, 30]:
         f1sum = 0
@@ -384,12 +372,14 @@ def k_fold(train, k):
             val = train[i * n // k:(i + 1) * n // k]
 
             hypothesis = adaboost(temp, boost)
-            f1sum+= simpletest(hypothesis, val)
+            f1t = simpletest(hypothesis, val)
+            f1sum+= f1t
 
-            print('Processing:',(i+1)*100/k, '% complete')
+            print('Processing:',(i+1)*100/k, '% complete. F1 score of the round: ', f1t)
 
         f1 = f1sum/k
-        print('k:', k, 'Boost:', boost, ' F1 Score:', f1)
+        scores[(k, boost)] = f1
+        print('k:', k, 'Boost:', boost, 'Avg F1 Score:', f1)
         br()
 
 
@@ -399,6 +389,11 @@ def main():
     init()
     for k in [5, 10, 20]:
         k_fold(train_data, k)
+
+    print('Summary:')
+    for key in scores:
+        print('k:', key[0], 'Boost:', key[1], ' F1 score:', scores[key])
+    br()
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,243 @@
+=================================================
+Reading data file...
+Processing datapoints...
+Dataset created. Number of datapoints: 9280
+Yes/No counter: (4640, 4640)
+=================================================
+k: 5 Boost: 1
+Processing: 20.0 % complete. F1 score of the round:  0.6063470627954085
+Processing: 40.0 % complete. F1 score of the round:  0.5734767025089605
+Processing: 60.0 % complete. F1 score of the round:  0.6489007328447701
+Processing: 80.0 % complete. F1 score of the round:  0.6462324393358877
+Processing: 100.0 % complete. F1 score of the round:  0.687013764213046
+k: 5 Boost: 1 Avg F1 Score: 0.6323941403396145
+=================================================
+k: 5 Boost: 5
+Processing: 20.0 % complete. F1 score of the round:  0.6987218502738893
+Processing: 40.0 % complete. F1 score of the round:  0.7026706231454005
+Processing: 60.0 % complete. F1 score of the round:  0.806714628297362
+Processing: 80.0 % complete. F1 score of the round:  0.8505392912172572
+Processing: 100.0 % complete. F1 score of the round:  0.8117195004803074
+k: 5 Boost: 5 Avg F1 Score: 0.7740731786828434
+=================================================
+k: 5 Boost: 10
+Processing: 20.0 % complete. F1 score of the round:  0.8370607028753994
+Processing: 40.0 % complete. F1 score of the round:  0.8394805194805194
+Processing: 60.0 % complete. F1 score of the round:  0.7750708215297452
+Processing: 80.0 % complete. F1 score of the round:  0.8388140161725068
+Processing: 100.0 % complete. F1 score of the round:  0.8153273017562533
+k: 5 Boost: 10 Avg F1 Score: 0.821150672362885
+=================================================
+k: 5 Boost: 20
+Processing: 20.0 % complete. F1 score of the round:  0.8528784648187634
+Processing: 40.0 % complete. F1 score of the round:  0.831266846361186
+Processing: 60.0 % complete. F1 score of the round:  0.8241758241758241
+Processing: 80.0 % complete. F1 score of the round:  0.8607983623336746
+Processing: 100.0 % complete. F1 score of the round:  0.6846846846846847
+k: 5 Boost: 20 Avg F1 Score: 0.8107608364748264
+=================================================
+k: 5 Boost: 30
+Processing: 20.0 % complete. F1 score of the round:  0.8467995802728226
+Processing: 40.0 % complete. F1 score of the round:  0.8211991434689507
+Processing: 60.0 % complete. F1 score of the round:  0.8435664709022958
+Processing: 80.0 % complete. F1 score of the round:  0.8478829064296916
+Processing: 100.0 % complete. F1 score of the round:  0.8132464712269273
+k: 5 Boost: 30 Avg F1 Score: 0.8345389144601377
+=================================================
+k: 10 Boost: 1
+Processing: 10.0 % complete. F1 score of the round:  0.5777126099706744
+Processing: 20.0 % complete. F1 score of the round:  0.5891677675033025
+Processing: 30.0 % complete. F1 score of the round:  0.6206896551724138
+Processing: 40.0 % complete. F1 score of the round:  0.6482213438735177
+Processing: 50.0 % complete. F1 score of the round:  0.6783919597989949
+Processing: 60.0 % complete. F1 score of the round:  0.6426666666666667
+Processing: 70.0 % complete. F1 score of the round:  0.6386333771353482
+Processing: 80.0 % complete. F1 score of the round:  0.6197564276048714
+Processing: 90.0 % complete. F1 score of the round:  0.6157965194109772
+Processing: 100.0 % complete. F1 score of the round:  0.6224066390041494
+k: 10 Boost: 1 Avg F1 Score: 0.6253442966140916
+=================================================
+k: 10 Boost: 5
+Processing: 10.0 % complete. F1 score of the round:  0.6151685393258427
+Processing: 20.0 % complete. F1 score of the round:  0.7381443298969071
+Processing: 30.0 % complete. F1 score of the round:  0.7212713936430317
+Processing: 40.0 % complete. F1 score of the round:  0.5985815602836879
+Processing: 50.0 % complete. F1 score of the round:  0.8621041879468846
+Processing: 60.0 % complete. F1 score of the round:  0.797427652733119
+Processing: 70.0 % complete. F1 score of the round:  0.8562933597621408
+Processing: 80.0 % complete. F1 score of the round:  0.8461538461538461
+Processing: 90.0 % complete. F1 score of the round:  0.833641404805915
+Processing: 100.0 % complete. F1 score of the round:  0.8263598326359832
+k: 10 Boost: 5 Avg F1 Score: 0.7695146107187358
+=================================================
+k: 10 Boost: 10
+Processing: 10.0 % complete. F1 score of the round:  0.826879271070615
+Processing: 20.0 % complete. F1 score of the round:  0.827021494370522
+Processing: 30.0 % complete. F1 score of the round:  0.8486096807415037
+Processing: 40.0 % complete. F1 score of the round:  0.8399570354457573
+Processing: 50.0 % complete. F1 score of the round:  0.7246722288438617
+Processing: 60.0 % complete. F1 score of the round:  0.8044943820224719
+Processing: 70.0 % complete. F1 score of the round:  0.8595564941921858
+Processing: 80.0 % complete. F1 score of the round:  0.8533057851239669
+Processing: 90.0 % complete. F1 score of the round:  0.8178438661710037
+Processing: 100.0 % complete. F1 score of the round:  0.8056460369163952
+k: 10 Boost: 10 Avg F1 Score: 0.8207986274898282
+=================================================
+k: 10 Boost: 20
+Processing: 10.0 % complete. F1 score of the round:  0.8287895310796075
+Processing: 20.0 % complete. F1 score of the round:  0.8588957055214724
+Processing: 30.0 % complete. F1 score of the round:  0.8478260869565217
+Processing: 40.0 % complete. F1 score of the round:  0.8155339805825242
+Processing: 50.0 % complete. F1 score of the round:  0.8625393494228751
+Processing: 60.0 % complete. F1 score of the round:  0.8148148148148148
+Processing: 70.0 % complete. F1 score of the round:  0.8545081967213115
+Processing: 80.0 % complete. F1 score of the round:  0.7905935050391937
+Processing: 90.0 % complete. F1 score of the round:  0.8163265306122449
+Processing: 100.0 % complete. F1 score of the round:  0.803921568627451
+k: 10 Boost: 20 Avg F1 Score: 0.8293749269378017
+=================================================
+k: 10 Boost: 30
+Processing: 10.0 % complete. F1 score of the round:  0.8325791855203619
+Processing: 20.0 % complete. F1 score of the round:  0.8169522091974751
+Processing: 30.0 % complete. F1 score of the round:  0.8406091370558375
+Processing: 40.0 % complete. F1 score of the round:  0.818086225026288
+Processing: 50.0 % complete. F1 score of the round:  0.8473852721451441
+Processing: 60.0 % complete. F1 score of the round:  0.8097886540600667
+Processing: 70.0 % complete. F1 score of the round:  0.8725388601036269
+Processing: 80.0 % complete. F1 score of the round:  0.843979057591623
+Processing: 90.0 % complete. F1 score of the round:  0.8272251308900522
+Processing: 100.0 % complete. F1 score of the round:  0.8362068965517241
+k: 10 Boost: 30 Avg F1 Score: 0.83453506281422
+=================================================
+k: 20 Boost: 1
+Processing: 5.0 % complete. F1 score of the round:  0.5898123324396783
+Processing: 10.0 % complete. F1 score of the round:  0.664819944598338
+Processing: 15.0 % complete. F1 score of the round:  0.6196473551637279
+Processing: 20.0 % complete. F1 score of the round:  0.6157760814249363
+Processing: 25.0 % complete. F1 score of the round:  0.5888888888888889
+Processing: 30.0 % complete. F1 score of the round:  0.5869565217391305
+Processing: 35.0 % complete. F1 score of the round:  0.655072463768116
+Processing: 40.0 % complete. F1 score of the round:  0.6787564766839379
+Processing: 45.0 % complete. F1 score of the round:  0.6822916666666667
+Processing: 50.0 % complete. F1 score of the round:  0.6699029126213591
+Processing: 55.0 % complete. F1 score of the round:  0.6458333333333333
+Processing: 60.0 % complete. F1 score of the round:  0.6434316353887399
+Processing: 65.0 % complete. F1 score of the round:  0.6430379746835443
+Processing: 70.0 % complete. F1 score of the round:  0.6873508353221957
+Processing: 75.0 % complete. F1 score of the round:  0.5932203389830508
+Processing: 80.0 % complete. F1 score of the round:  0.649746192893401
+Processing: 85.0 % complete. F1 score of the round:  0.6649746192893401
+Processing: 90.0 % complete. F1 score of the round:  0.6161879895561359
+Processing: 95.0 % complete. F1 score of the round:  0.6666666666666666
+Processing: 100.0 % complete. F1 score of the round:  0.6221079691516709
+k: 20 Boost: 1 Avg F1 Score: 0.6392241099631429
+=================================================
+k: 20 Boost: 5
+Processing: 5.0 % complete. F1 score of the round:  0.4262295081967213
+Processing: 10.0 % complete. F1 score of the round:  0.8571428571428571
+Processing: 15.0 % complete. F1 score of the round:  0.8793456032719836
+Processing: 20.0 % complete. F1 score of the round:  0.848605577689243
+Processing: 25.0 % complete. F1 score of the round:  0.647814910025707
+Processing: 30.0 % complete. F1 score of the round:  0.8408163265306123
+Processing: 35.0 % complete. F1 score of the round:  0.6299212598425197
+Processing: 40.0 % complete. F1 score of the round:  0.4697986577181209
+Processing: 45.0 % complete. F1 score of the round:  0.682170542635659
+Processing: 50.0 % complete. F1 score of the round:  0.8393574297188755
+Processing: 55.0 % complete. F1 score of the round:  0.8109243697478992
+Processing: 60.0 % complete. F1 score of the round:  0.7964989059080962
+Processing: 65.0 % complete. F1 score of the round:  0.8515625
+Processing: 70.0 % complete. F1 score of the round:  0.6487935656836461
+Processing: 75.0 % complete. F1 score of the round:  0.8553719008264463
+Processing: 80.0 % complete. F1 score of the round:  0.6650485436893203
+Processing: 85.0 % complete. F1 score of the round:  0.6700251889168766
+Processing: 90.0 % complete. F1 score of the round:  0.621761658031088
+Processing: 95.0 % complete. F1 score of the round:  0.7357512953367876
+Processing: 100.0 % complete. F1 score of the round:  0.6313131313131313
+k: 20 Boost: 5 Avg F1 Score: 0.7204126866112797
+=================================================
+k: 20 Boost: 10
+Processing: 5.0 % complete. F1 score of the round:  0.6518518518518519
+Processing: 10.0 % complete. F1 score of the round:  0.8411633109619687
+Processing: 15.0 % complete. F1 score of the round:  0.8513238289205703
+Processing: 20.0 % complete. F1 score of the round:  0.8381742738589212
+Processing: 25.0 % complete. F1 score of the round:  0.7334963325183373
+Processing: 30.0 % complete. F1 score of the round:  0.8059071729957805
+Processing: 35.0 % complete. F1 score of the round:  0.7237163814180929
+Processing: 40.0 % complete. F1 score of the round:  0.8293736501079914
+Processing: 45.0 % complete. F1 score of the round:  0.8418803418803418
+Processing: 50.0 % complete. F1 score of the round:  0.8519269776876267
+Processing: 55.0 % complete. F1 score of the round:  0.8034934497816594
+Processing: 60.0 % complete. F1 score of the round:  0.8255319148936171
+Processing: 65.0 % complete. F1 score of the round:  0.8315565031982943
+Processing: 70.0 % complete. F1 score of the round:  0.8292682926829269
+Processing: 75.0 % complete. F1 score of the round:  0.7913978494623657
+Processing: 80.0 % complete. F1 score of the round:  0.8265107212475634
+Processing: 85.0 % complete. F1 score of the round:  0.8177966101694915
+Processing: 90.0 % complete. F1 score of the round:  0.6005361930294907
+Processing: 95.0 % complete. F1 score of the round:  0.8557919621749409
+Processing: 100.0 % complete. F1 score of the round:  0.7849686847599165
+k: 20 Boost: 10 Avg F1 Score: 0.7967833151800875
+=================================================
+k: 20 Boost: 20
+Processing: 5.0 % complete. F1 score of the round:  0.7999999999999999
+Processing: 10.0 % complete. F1 score of the round:  0.8063781321184511
+Processing: 15.0 % complete. F1 score of the round:  0.8489795918367348
+Processing: 20.0 % complete. F1 score of the round:  0.8242424242424243
+Processing: 25.0 % complete. F1 score of the round:  0.8559670781893004
+Processing: 30.0 % complete. F1 score of the round:  0.834008097165992
+Processing: 35.0 % complete. F1 score of the round:  0.7790432801822323
+Processing: 40.0 % complete. F1 score of the round:  0.8418803418803418
+Processing: 45.0 % complete. F1 score of the round:  0.8248847926267282
+Processing: 50.0 % complete. F1 score of the round:  0.8541666666666667
+Processing: 55.0 % complete. F1 score of the round:  0.8486140724946695
+Processing: 60.0 % complete. F1 score of the round:  0.8222222222222222
+Processing: 65.0 % complete. F1 score of the round:  0.8403361344537815
+Processing: 70.0 % complete. F1 score of the round:  0.8461538461538461
+Processing: 75.0 % complete. F1 score of the round:  0.860125260960334
+Processing: 80.0 % complete. F1 score of the round:  0.8531187122736419
+Processing: 85.0 % complete. F1 score of the round:  0.8582995951417003
+Processing: 90.0 % complete. F1 score of the round:  0.8125000000000001
+Processing: 95.0 % complete. F1 score of the round:  0.8617511520737328
+Processing: 100.0 % complete. F1 score of the round:  0.7864693446088795
+k: 20 Boost: 20 Avg F1 Score: 0.832957037264584
+=================================================
+k: 20 Boost: 30
+Processing: 5.0 % complete. F1 score of the round:  0.8394004282655245
+Processing: 10.0 % complete. F1 score of the round:  0.7637231503579953
+Processing: 15.0 % complete. F1 score of the round:  0.8450106157112526
+Processing: 20.0 % complete. F1 score of the round:  0.8343815513626833
+Processing: 25.0 % complete. F1 score of the round:  0.8662420382165605
+Processing: 30.0 % complete. F1 score of the round:  0.8329718004338396
+Processing: 35.0 % complete. F1 score of the round:  0.8185654008438819
+Processing: 40.0 % complete. F1 score of the round:  0.8154897494305239
+Processing: 45.0 % complete. F1 score of the round:  0.8000000000000002
+Processing: 50.0 % complete. F1 score of the round:  0.8472505091649695
+Processing: 55.0 % complete. F1 score of the round:  0.8405172413793103
+Processing: 60.0 % complete. F1 score of the round:  0.8123620309050773
+Processing: 65.0 % complete. F1 score of the round:  0.8506224066390041
+Processing: 70.0 % complete. F1 score of the round:  0.8528784648187633
+Processing: 75.0 % complete. F1 score of the round:  0.8445378151260505
+Processing: 80.0 % complete. F1 score of the round:  0.852
+Processing: 85.0 % complete. F1 score of the round:  0.8443496801705757
+Processing: 90.0 % complete. F1 score of the round:  0.8310139165009941
+Processing: 95.0 % complete. F1 score of the round:  0.8475336322869954
+Processing: 100.0 % complete. F1 score of the round:  0.7848101265822784
+k: 20 Boost: 30 Avg F1 Score: 0.831183027909814
+=================================================
+Summary:
+k: 5 Boost: 1  F1 score: 0.6323941403396145
+k: 5 Boost: 5  F1 score: 0.7740731786828434
+k: 5 Boost: 10  F1 score: 0.821150672362885
+k: 5 Boost: 20  F1 score: 0.8107608364748264
+k: 5 Boost: 30  F1 score: 0.8345389144601377
+k: 10 Boost: 1  F1 score: 0.6253442966140916
+k: 10 Boost: 5  F1 score: 0.7695146107187358
+k: 10 Boost: 10  F1 score: 0.8207986274898282
+k: 10 Boost: 20  F1 score: 0.8293749269378017
+k: 10 Boost: 30  F1 score: 0.83453506281422
+k: 20 Boost: 1  F1 score: 0.6392241099631429
+k: 20 Boost: 5  F1 score: 0.7204126866112797
+k: 20 Boost: 10  F1 score: 0.7967833151800875
+k: 20 Boost: 20  F1 score: 0.832957037264584
+k: 20 Boost: 30  F1 score: 0.831183027909814
+=================================================
