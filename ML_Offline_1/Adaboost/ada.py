@@ -2,6 +2,7 @@ import csv
 import math
 import random
 import collections
+import numpy.random as rand
 
 train_data = []
 test_data = []
@@ -179,6 +180,83 @@ def decision_stump(train):
     return DecisionStump(igs, ig, feature_index)
 
 
+def resample(dataset, w):
+    n = len(w)
+    cum_w = [0]*n
+    cum_w[0] = w[0]
+    for i in range(1,n):
+        cum_w[i] = cum_w[i-1]+w[i]
+    tempdata = []
+    for i in range(n):
+        u = rand.uniform(0, 1)
+        j = 0
+        while j < n:
+            if u < cum_w[j]:
+                break
+            else:
+                j+=1
+        tempdata.append(dataset[j])
+
+    return tempdata
+
+def check(dc, row):
+    if dc.best.value is None:
+        value = row.x[dc.feature_index]
+        if dc.best.ans[value] == row.y:
+            return True
+        else:
+            return False
+    else:
+        value = row.x[dc.feature_index]
+        if value < dc.best.value:
+            if dc.best.ans['less'] == row.y:
+                return True
+            else:
+                return False
+        else:
+            if dc.best.ans['greater'] == row.y:
+                return True
+            else:
+                return False
+
+
+
+
+    return None
+
+def normalize(w):
+    n = len(w)
+    sum = 0
+    for i in range(n):
+        sum+= w[i]
+    for i in range(n):
+        w[i] = w[i]/sum
+    return w
+
+def adaboost(dataset, K): #K is number of boost
+    n = len(dataset)
+    w = [1/n]*n
+    h = [None]*K
+    z = [None]*K
+
+    for k in range(K):
+        tempdata = resample(dataset, w)
+        dc = decision_stump(tempdata)
+        error = 0
+        for j in range(n):
+            if check(dc, dataset[j]) == False:
+                error = error + w[j]
+        for j in range(n):
+            if check(dc, dataset[j]) == True:
+                w[j] = w[j]* error/(1-error)
+
+        w = normalize(w)
+
+
+
+
+
+
 def init():
     #declare globals
     global train_data, test_data
@@ -249,7 +327,6 @@ def init():
 def main():
     init()
     dc = decision_stump(train_data)
-    print(header[dc.feature_index], dc.best.entropy, dc.best.value, dc.best.ans)
 
 if __name__ == "__main__":
     main()
