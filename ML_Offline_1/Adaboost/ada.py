@@ -295,10 +295,8 @@ def adaboost(dataset, K): #K is number of boost
                 w[j] = w[j]* error/(1-error)
 
         w = normalize(w)
-
         if error >= 0.5:
             continue
-
         if error == 0:
             z[k] = 1
         else:
