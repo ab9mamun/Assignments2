@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #define CAP 300
+#define pi (2*acos(0.0))
 using namespace std;
 
 void matcopy(double** to, double** from, int r=4, int c=4);
@@ -8,7 +9,9 @@ void matmul(double** res, double** mat1, double**mat2, int r1=4, int c1 =4, int 
 void randmat(double** mat, int r = 4, int c=4);
 double** newmat(int r=4, int c=4);
 void delmat(double** mat, int r=4, int c=4);
-double** eye(int r=4);
+double** matI(int r=4);
+void transpose(double** res, double** mat, int r=4, int c=4);
+
 
 void ASSERT(bool cond, const char* str){
     if(!cond){
@@ -17,6 +20,148 @@ void ASSERT(bool cond, const char* str){
         exit(1);
     }
 }
+
+class Vector{
+
+public:
+    double x,y,z;
+    Vector(){}
+    Vector(double x, double y, double z){
+        this->x = x; this->y = y; this->z = z;
+    }
+    static Vector zero(){
+        Vector v(0,0,0);
+        return v;
+    }
+    static Vector X(){
+        Vector v(1,0,0);
+        return v;
+    }
+    static Vector Y(){
+        Vector v(0,1,0);
+        return v;
+    }
+    static Vector Z(){
+        Vector v(0,0,1);
+        return v;
+    }
+
+
+    Vector operator-(){
+        Vector v(-x, -y, -z);
+        return v;
+    }
+    Vector operator+(Vector v){
+        Vector w(x+v.x, y+v.y, z+v.z);
+        return w;
+    }
+    Vector operator-(Vector v){
+        return (*this) + (-v);
+    }
+    double length2(){
+        return x*x+y*y+z*z;
+    }
+    double length(){
+        return sqrt(length2());
+    }
+    Vector operator*(double c){
+        Vector v(x*c, y*c, z*c);
+        return v;
+    }
+
+    Vector operator/(double c){
+        return (*this)*(1.0/c);
+    }
+    Vector unit(){
+        double len = length();
+        return (*this)/len;
+    }
+
+    double dot(Vector v){
+        return x*v.x + y*v.y + z*v.z;
+    }
+
+    Vector operator*(Vector v){
+        Vector w(y * v.z - z * v.y,
+                 -x * v.z + z * v.x,
+                 x * v.y - y * v.x);
+        return w;
+    }
+
+    double operator[](int i){
+        if(i==0) return x;
+        if (i==1) return y;
+        if(i==2) return z;
+        return 0;
+    }
+
+    /// n is a perpendicular vector to the surface
+    Vector reflect(Vector n){
+        n = n.unit();
+        Vector a = *this;
+        return a - n* 2* a.dot(n);
+    }
+
+    ///rotate respect to a perpendicular axis
+    Vector rotatePA(double angle_deg, Vector axis = Z()){
+        double A = angle_deg*pi/180.0;
+        Vector r = axis.unit();
+        Vector l = (*this);
+        Vector u = r*l;
+        u = l*cos(A) + u*sin(A);
+        return u;
+    }
+
+    Vector perp2d(){
+        Vector v(-y, x, 0);
+        return v;
+    }
+
+    Vector rotate2d(double angle_deg){
+        double A = angle_deg*pi/180.0;
+        Vector u = (*this)*cos(A) + perp2d()*sin(A);
+        return u;
+    }
+
+    void set(double x, double y, double z){
+        this->x = x; this->y = y; this->z = z;
+    }
+
+
+};
+
+Vector operator*(double c, Vector v){
+    return v*c;
+}
+
+
+class Point
+{
+public:
+	double x,y,z;
+	Point(){}
+	Point(Vector v){x= v.x; y = v.y; z = v.z;}
+
+	Point(double x, double y, double z){
+        this->x = x; this->y = y; this->z = z;
+	}
+	Vector asVector(){ Vector v(x,y,z); return v;}
+
+	Point operator+(Vector v){
+        Point p(x + v.x, y+v.y, z+v.z);
+       // printf("%lf %lf %lf\n", p.x, p.y, p.z);
+        return p;
+	}
+    Vector operator-(Point p){
+        Vector v(x - p.x, y-p.y, z-p.z);
+        return v;
+    }
+
+     void set(double x, double y, double z){
+        this->x = x; this->y = y; this->z = z;
+    }
+
+};
 
 
 class Stack{
@@ -63,8 +208,13 @@ ifstream scene;
 ofstream stage1, stage2, stage3;
 double** top;
 Stack* stk;
-
-
+double eye[3]; ///eyeX, eyeY, eyeZ
+double look[3]; ///lookX, lookY, lookZ
+double up[3]; ///upX, upY, upZ
+double gluPerspective[4]; ///fovY, aspectRatio, near, far
+double x[] = {1,0,0};
+double y[] = {0,1,0};
+double z[] = {0, 0, 1};
 
 
 void matcopy(double** to, double** from, int r, int c){
@@ -120,7 +270,7 @@ void delmat(double** mat, int r, int c){
     mat = NULL;
 }
 
-double** eye(int r){
+double** matI(int r){
     double** mat = newmat(r,r);
     for(int i=0; i<r; i++){
         for(int j=0; j<r; j++)
@@ -130,7 +280,19 @@ double** eye(int r){
     return mat;
 }
 
+void transpose(double** res, double** mat, int r, int c){
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c; j++)
+            res[j][i] = mat[i][j];
+    }
+}
 
+void arrayprint(double a[], int l){
+    cout<<"Array:"<<endl;
+    for(int i=0; i<l; i++)
+        cout<<a[i]<<" ";
+    cout<<endl<<endl;
+}
 
 
 
@@ -149,48 +311,172 @@ void close_files(){
     stage3.close();
 }
 
-void finish(){
-
-}
-
-int main(){
-
+void init(){
     srand(3434); ///seed--
     open_files();
     top = newmat();
     stk = new Stack();
 
+    for(int i=0; i<3; i++)
+        scene>>eye[i];
+    for(int i=0; i<3; i++)
+        scene>>look[i];
+    for(int i=0; i<3; i++)
+        scene>>up[i];
+    for(int i=0; i<4; i++)
+        scene>>gluPerspective[i];
+
+    arrayprint(eye, 3);
+    arrayprint(look, 3);
+    arrayprint(up, 3);
+    arrayprint(gluPerspective, 4);
+}
+
+void finish(){
+    close_files();
+    delmat(top);
+    delete stk;
+}
+
+double rad(double deg_angle){
+    return deg_angle*pi/180.0;
+}
+double deg(double rad_angle){
+    return rad_angle*180.0/pi;
+}
+
+Vector R(Vector v, Vector a, double angle){
+   double c, s;
+   c = cos(rad(angle));
+   s = sin(rad(angle));
+
+   return c*v + (1-c)* a.dot(v)* a + s*(a*v);
+}
 
 
-    double** I = eye(4);
+///-- io
+
+void input_triangle(ifstream& in, double** p1, double** p2, double** p3){
+    for(int i=0; i<3; i++)
+        in>>p1[i][0];
+    p1[3][0] = 1;
+    for(int i=0; i<3; i++)
+        in>>p2[i][0];
+    p2[3][0] = 1;
+    for(int i=0; i<3; i++)
+        in>>p3[i][0];
+    p3[3][0] = 1;
+}
+
+
+void output_triangle(ofstream& out, double** p1t, double** p2t, double**p3t){
+    for(int i=0; i<3; i++)
+        out<<p1t[i][0]<<" ";
+    out<<endl;
+    for(int i=0; i<3; i++)
+        out<<p2t[i][0]<<" ";
+    out<<endl;
+    for(int i=0; i<3; i++)
+        out<<p3t[i][0]<<" ";
+    out<<endl<<endl;
+}
+
+int main(){
+
+    init();
+
+    double** I = matI(4);
     double** A = newmat();
-    randmat(A);
     double**B = newmat();
-    randmat(B);
     double** C = newmat();
+
+    double** p1, **p2, **p3;
+    p1 = newmat(4,1);
+    p2 = newmat(4,1);
+    p3 = newmat(4,1);
+    double** p1t, **p2t, **p3t;
+    p1t = newmat(4,1);
+    p2t = newmat(4,1);
+    p3t = newmat(4,1);
+
+
+
+    Vector c1, c2, c3, a;
+    double angle;
   //  matprint(A);
    // matprint(B);
-
+   /// stage 1
+    matcopy(top, I);
     stk->push(I);
-    stk->push(A);
+    string str;
+    while(true){
+        scene>>str;
+        if(str == "end") break;
+        //cout<<str<<endl;
+        if(str == "push")
+            stk->push(top);
+        else if(str=="pop")
+            stk->pop(top);
+        else if(str == "translate"){
+            matcopy(A, I);
+            for(int i = 0; i<3; i++)
+                scene>>A[i][3];
+            matmul(top, top, A);
 
-    matmul(C, A, B);
-    stk->push(C);
+        }
+        else if(str == "rotate"){
+            scene>>angle;
+            scene>>a.x>>a.y>>a.z;
+
+            c1 = R(Vector::X() , a, angle);
+            c2 = R(Vector::Y(), a, angle);
+            c3 = R(Vector::Z(), a, angle);
+            matcopy(A, I);
+            for(int i=0; i<3; i++) {
+                A[i][0] = c1[i];
+                A[i][1] = c2[i];
+                A[i][2] = c3[i];
+            }
+            matmul(top, top, A);
+
+        }
+        else if(str == "scale"){
+            matcopy(A, I);
+            for(int i = 0; i<3; i++)
+                scene>>A[i][i];
+            matmul(top, top, A);
+        }
+        else if(str == "triangle"){
+
+
+            input_triangle(scene, p1, p2, p3);
+            matmul(p1t, top, p1, 4, 4, 1);
+            matmul(p2t, top, p2, 4, 4, 1);
+            matmul(p3t, top, p3, 4, 4, 1);
+            output_triangle(stage1, p1t, p2t, p3t);
+
+        }
+
+    }
+
 
     while(!stk->empty()){
         stk->pop(top);
         matprint(top);
     }
 
-
-
-
-    close_files();
     delmat(I);
     delmat(A);
     delmat(B);
     delmat(C);
-    delmat(top);
+    delmat(p1);
+    delmat(p2);
+    delmat(p3);
+    delmat(p1t);
+    delmat(p2t);
+    delmat(p3t);
+
+    finish();
 
 
 }
