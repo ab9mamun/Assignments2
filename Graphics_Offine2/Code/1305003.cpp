@@ -478,7 +478,6 @@ int main(){
 
             output_triangle(stage1, p1t, p2t, p3t);
 
-            output_triangle(stage3, p1t, p2t, p3t);
             ///stage2
             Vector l(look[0] - eye[0], look[1] - eye[1], look[2] - eye[2]);
             l = l.unit();
@@ -510,7 +509,31 @@ int main(){
 
             output_triangle(stage2, p1t, p2t, p3t);
 
+            ///stage3 ---
+            double fovY, fovX, near, far, t_, r_;
+            fovY = gluPerspective[0];
+            fovX = gluPerspective[0]*gluPerspective[1];
+            near = gluPerspective[2];
+            far = gluPerspective[3];
 
+            t_ = near*tan(rad(fovY/2));
+            r_ = near*tan(rad(fovX/2));
+
+            matcopy(A, I);
+            A[0][0] = near/r_;
+            A[1][1] = near/t_;
+            A[2][2] = -(far+near)/(far -near);
+            A[2][3] = -(2*far*near) / (far - near);
+            A[3][2] = -1;
+            A[3][3] = 0;
+            //matprint(A);
+
+            matmul(C, A, C);
+            matmul(p1t, C, p1, 4, 4, 1);
+            matmul(p2t, C, p2, 4, 4, 1);
+            matmul(p3t, C, p3, 4, 4, 1);
+
+            output_triangle(stage3, p1t, p2t, p3t);
         }
 
     }
