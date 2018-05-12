@@ -2,13 +2,13 @@
 #define CAP 300
 using namespace std;
 
-void matcopy(int** to, int** from, int r=4, int c=4);
-void matprint(int** mat, int r=4, int c=4);
-void matmul(int** res, int** mat1, int**mat2, int r1=4, int c1 =4, int c2 = 4);
-void randmat(int** mat, int r = 4, int c=4);
-int** newmat(int r=4, int c=4);
-void delmat(int** mat, int r=4, int c=4);
-int** eye(int r=4);
+void matcopy(double** to, double** from, int r=4, int c=4);
+void matprint(double** mat, int r=4, int c=4);
+void matmul(double** res, double** mat1, double**mat2, int r1=4, int c1 =4, int c2 = 4);
+void randmat(double** mat, int r = 4, int c=4);
+double** newmat(int r=4, int c=4);
+void delmat(double** mat, int r=4, int c=4);
+double** eye(int r=4);
 
 void ASSERT(bool cond, const char* str){
     if(!cond){
@@ -20,38 +20,37 @@ void ASSERT(bool cond, const char* str){
 
 
 class Stack{
-public:
-    int*** mats;
+    double*** mats;
     int top;
+public:
 
     Stack(){
         top = 0;
-        mats = new int**[CAP];
+        mats = new double**[CAP];
         for(int k=0; k<CAP; k++){
             mats[k] = newmat();
         }
     }
 
-    void push(int** mat){
+    void push(double** mat){
         ASSERT(top<CAP, "Stack overrunning");
         matcopy(mats[top], mat);
         top++;
     }
 
-    void pop(int** mat){
+    void pop(double** mat){
         ASSERT(top>0, "Stack underrunning");
         top--;
         matcopy(mat, mats[top]);
 
     }
+    bool empty(){
+        return top==0;
+    }
 
     ~Stack(){
         for(int k=0; k<CAP; k++){
-
-            for(int i=0; i<4; i++){
-               delete[] mats[k][i];
-            }
-            delete[] mats[k];
+            delmat(mats[k]);
         }
         delete[] mats;
         mats = NULL;
@@ -59,15 +58,23 @@ public:
 
 };
 
-void matcopy(int** to, int** from, int r, int c){
-    cout<<"Here I am"<<endl;
+///-------global variables------------------
+ifstream scene;
+ofstream stage1, stage2, stage3;
+double** top;
+Stack* stk;
+
+
+
+
+void matcopy(double** to, double** from, int r, int c){
     for(int i=0; i<r; i++)
         for(int j=0; j<c; j++)
             to[i][j] = from[i][j];
 
 }
 
-void matprint(int** mat, int r, int c){
+void matprint(double** mat, int r, int c){
     cout<<"Matrix:"<<endl;
     for(int i=0; i<r; i++){
         for(int j=0; j<c; j++)
@@ -77,7 +84,7 @@ void matprint(int** mat, int r, int c){
     cout<<endl;
 }
 
-void matmul(int** res, int** mat1, int** mat2, int r1, int c1, int c2) {
+void matmul(double** res, double** mat1, double** mat2, int r1, int c1, int c2) {
     int i, j, k;
     for (i = 0; i < r1; i++) {
         for (j = 0; j < c2; j++)
@@ -89,20 +96,23 @@ void matmul(int** res, int** mat1, int** mat2, int r1, int c1, int c2) {
     }
 }
 
-void randmat(int** mat, int r, int c){
+void randmat(double** mat, int r, int c){
     for(int i=0; i<4; i++)
-        for(int j=0; j<4; j++)
-            mat[i][j] = rand()%100 - 50;
+        for(int j=0; j<4; j++) {
+            double f = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+            mat[i][j] = f*100 - 50;
+        }
+
 }
 
-int** newmat(int r, int c){
-    int** mat = new int*[r];
+double** newmat(int r, int c){
+    double** mat = new double*[r];
     for(int i=0; i<r; i++){
-        mat[i] = new int[c];
+        mat[i] = new double[c];
     }
     return mat;
 }
-void delmat(int** mat, int r, int c){
+void delmat(double** mat, int r, int c){
     for(int i=0; i<r; i++){
         delete[] mat[i];
     }
@@ -110,8 +120,8 @@ void delmat(int** mat, int r, int c){
     mat = NULL;
 }
 
-int** eye(int r){
-    int** mat = newmat(r,r);
+double** eye(int r){
+    double** mat = newmat(r,r);
     for(int i=0; i<r; i++){
         for(int j=0; j<r; j++)
             if(i==j) mat[i][j] = 1;
@@ -120,10 +130,7 @@ int** eye(int r){
     return mat;
 }
 
-///-------global variables------------------
-ifstream scene;
-ofstream stage1, stage2, stage3;
-int top[4][4];
+
 
 
 
@@ -150,25 +157,40 @@ int main(){
 
     srand(3434); ///seed--
     open_files();
+    top = newmat();
+    stk = new Stack();
 
 
-    int** I = eye(4);
-    int** A = newmat();
+
+    double** I = eye(4);
+    double** A = newmat();
     randmat(A);
-    int**B = newmat();
+    double**B = newmat();
     randmat(B);
-    int** C = newmat();
-    matprint(A);
-    matprint(B);
+    double** C = newmat();
+  //  matprint(A);
+   // matprint(B);
 
-    matmul(C, A, I);
-    matprint(C);
+    stk->push(I);
+    stk->push(A);
+
+    matmul(C, A, B);
+    stk->push(C);
+
+    while(!stk->empty()){
+        stk->pop(top);
+        matprint(top);
+    }
+
+
+
 
     close_files();
     delmat(I);
     delmat(A);
     delmat(B);
     delmat(C);
+    delmat(top);
 
 
 }
