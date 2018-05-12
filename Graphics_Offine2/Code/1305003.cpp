@@ -235,15 +235,21 @@ void matprint(double** mat, int r, int c){
 }
 
 void matmul(double** res, double** mat1, double** mat2, int r1, int c1, int c2) {
+    double** temp = newmat(r1, c2);
     int i, j, k;
     for (i = 0; i < r1; i++) {
         for (j = 0; j < c2; j++)
         {
-            res[i][j] = 0;
-            for (k = 0; k < c1; k++)
-                res[i][j] += mat1[i][k]*mat2[k][j];
+            temp[i][j] = 0;
+            for (k = 0; k < c1; k++){
+                temp[i][j] += mat1[i][k]*mat2[k][j];
+               // cout<<mat1[i][k]<<" "<<mat2[k][j]<<endl;
+
+            }
         }
     }
+    matcopy(res, temp, r1, c2);
+    delmat(temp);
 }
 
 void randmat(double** mat, int r, int c){
@@ -299,9 +305,16 @@ void arrayprint(double a[], int l){
 
 void open_files(){
     scene.open("scene.txt");
+
     stage1.open("stage1.txt");
     stage2.open("stage2.txt");
     stage3.open("stage3.txt");
+
+    stage1.precision(4);
+    stage2.precision(4);
+    stage3.precision(4);
+
+
 }
 
 void close_files(){
@@ -326,10 +339,10 @@ void init(){
     for(int i=0; i<4; i++)
         scene>>gluPerspective[i];
 
-    arrayprint(eye, 3);
-    arrayprint(look, 3);
-    arrayprint(up, 3);
-    arrayprint(gluPerspective, 4);
+   // arrayprint(eye, 3);
+  //  arrayprint(look, 3);
+   // arrayprint(up, 3);
+  //  arrayprint(gluPerspective, 4);
 }
 
 void finish(){
@@ -418,6 +431,7 @@ int main(){
         else if(str=="pop")
             stk->pop(top);
         else if(str == "translate"){
+            //continue;
             matcopy(A, I);
             for(int i = 0; i<3; i++)
                 scene>>A[i][3];
@@ -425,6 +439,7 @@ int main(){
 
         }
         else if(str == "rotate"){
+                //continue;
             scene>>angle;
             scene>>a.x>>a.y>>a.z;
 
@@ -441,10 +456,14 @@ int main(){
 
         }
         else if(str == "scale"){
+                //continue;
             matcopy(A, I);
             for(int i = 0; i<3; i++)
                 scene>>A[i][i];
+          //  matprint(A);
+           // matprint(top);
             matmul(top, top, A);
+           // matprint(top);
         }
         else if(str == "triangle"){
 
@@ -453,16 +472,13 @@ int main(){
             matmul(p1t, top, p1, 4, 4, 1);
             matmul(p2t, top, p2, 4, 4, 1);
             matmul(p3t, top, p3, 4, 4, 1);
+
             output_triangle(stage1, p1t, p2t, p3t);
+            output_triangle(stage2, p1t, p2t, p3t);
+            output_triangle(stage3, p1t, p2t, p3t);
 
         }
 
-    }
-
-
-    while(!stk->empty()){
-        stk->pop(top);
-        matprint(top);
     }
 
     delmat(I);
