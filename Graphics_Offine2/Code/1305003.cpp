@@ -443,6 +443,8 @@ int main(){
             scene>>angle;
             scene>>a.x>>a.y>>a.z;
 
+            a = a.unit();
+
             c1 = R(Vector::X() , a, angle);
             c2 = R(Vector::Y(), a, angle);
             c3 = R(Vector::Z(), a, angle);
@@ -469,13 +471,45 @@ int main(){
 
 
             input_triangle(scene, p1, p2, p3);
+            ///stage1
             matmul(p1t, top, p1, 4, 4, 1);
             matmul(p2t, top, p2, 4, 4, 1);
             matmul(p3t, top, p3, 4, 4, 1);
 
             output_triangle(stage1, p1t, p2t, p3t);
-            output_triangle(stage2, p1t, p2t, p3t);
+
             output_triangle(stage3, p1t, p2t, p3t);
+            ///stage2
+            Vector l(look[0] - eye[0], look[1] - eye[1], look[2] - eye[2]);
+            l = l.unit();
+            Vector upp(up[0], up[1], up[2]);
+            Vector r = l*upp;
+            r = r.unit();
+
+            Vector u = r*l;
+
+
+            matcopy(A, I);
+            for(int i=0; i<3; i++){
+                A[i][3] = -eye[i];
+            }
+
+            matcopy(B, I);
+            for(int j = 0; j<3; j++){
+                B[0][j] = r[j];
+                B[1][j] = u[j];
+                B[2][j] = -l[j];
+            }
+
+            matmul(C, A, B);
+            matmul(C, C, top);
+
+            matmul(p1t, C, p1, 4, 4, 1);
+            matmul(p2t, C, p2, 4, 4, 1);
+            matmul(p3t, C, p3, 4, 4, 1);
+
+            output_triangle(stage2, p1t, p2t, p3t);
+
 
         }
 
