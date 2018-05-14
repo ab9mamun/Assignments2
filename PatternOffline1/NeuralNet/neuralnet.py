@@ -4,6 +4,7 @@ from random import randrange
 from random import random
 from csv import reader
 from math import exp
+from random import shuffle
 
 
 # Load a CSV file
@@ -35,35 +36,6 @@ def str_column_to_int(dataset, column):
         row[column] = lookup[row[column]]
     return lookup
 
-
-# Find the min and max values for each column
-def dataset_minmax(dataset):
-    minmax = list()
-    stats = [[min(column), max(column)] for column in zip(*dataset)]
-    return stats
-
-
-# Rescale dataset columns to the range 0-1
-def normalize_dataset(dataset, minmax):
-    for row in dataset:
-        for i in range(len(row) - 1):
-            row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
-
-
-# Split a dataset into k folds
-def cross_validation_split(dataset, n_folds):
-    dataset_split = list()
-    dataset_copy = list(dataset)
-    fold_size = int(len(dataset) / n_folds)
-    for i in range(n_folds):
-        fold = list()
-        while len(fold) < fold_size:
-            index = randrange(len(dataset_copy))
-            fold.append(dataset_copy.pop(index))
-        dataset_split.append(fold)
-    return dataset_split
-
-
 # Calculate accuracy percentage
 def accuracy_metric(actual, predicted):
     correct = 0
@@ -72,25 +44,6 @@ def accuracy_metric(actual, predicted):
             correct += 1
     return correct / float(len(actual)) * 100.0
 
-
-# Evaluate an algorithm using a cross validation split
-def evaluate_algorithm(dataset, algorithm, n_folds, *args):
-    folds = cross_validation_split(dataset, n_folds)
-    scores = list()
-    for fold in folds:
-        train_set = list(folds)
-        train_set.remove(fold)
-        train_set = sum(train_set, [])
-        test_set = list()
-        for row in fold:
-            row_copy = list(row)
-            test_set.append(row_copy)
-            row_copy[-1] = None
-        predicted = algorithm(train_set, test_set, *args)
-        actual = [row[-1] for row in fold]
-        accuracy = accuracy_metric(actual, predicted)
-        scores.append(accuracy)
-    return scores
 
 
 # Calculate neuron activation for an input
@@ -160,6 +113,7 @@ def update_weights(network, row, l_rate):
 
 # Train a network for a fixed number of epochs
 def train_network(network, train, l_rate, n_epoch, n_outputs):
+    print('Training Network')
     for epoch in range(n_epoch):
         for row in train:
             outputs = forward_propagate(network, row)
@@ -168,9 +122,13 @@ def train_network(network, train, l_rate, n_epoch, n_outputs):
             backward_propagate_error(network, expected)
             update_weights(network, row, l_rate)
 
+        if (epoch+1)%(n_epoch//10) == 0:
+            print('Training...', (epoch+1)*100/n_epoch, '% complete')
+
 
 # Initialize a network
 def initialize_network(n_inputs, n_hidden_layers, n_hidden, n_outputs):
+    print('Building Network...')
     network = list()
     size = n_inputs
     for r in range(n_hidden_layers):
@@ -186,40 +144,86 @@ def initialize_network(n_inputs, n_hidden_layers, n_hidden, n_outputs):
 # Make a prediction with a network
 def predict(network, row):
     outputs = forward_propagate(network, row)
-    return outputs.index(max(outputs))
+    return outputs.index(max(outputs))  #returns the class with highest output value
 
 
 # Backpropagation Algorithm With Stochastic Gradient Descent
-def back_propagation(train, test, l_rate, n_epoch, n_hidden_layers, n_hidden):
+def back_propagation(train, l_rate, n_epoch, n_hidden_layers, n_hidden):
     n_inputs = len(train[0]) - 1
     n_outputs = len(set([row[-1] for row in train]))
     network = initialize_network(n_inputs, n_hidden_layers, n_hidden, n_outputs)
     train_network(network, train, l_rate, n_epoch, n_outputs)
+    return network
+
+def test_network(network, test):
     predictions = list()
     for row in test:
         prediction = predict(network, row)
         predictions.append(prediction)
     return (predictions)
 
+def evaluate(network, fold):
+    print('Testing...')
+    test_set = list()
+    for row in fold:
+        row_copy = list(row)
+        test_set.append(row_copy)
+        row_copy[-1] = None
 
-# Test Backprop on Seeds dataset
-seed(1)
-# load and prepare data
-filename = 'data.csv'
-dataset = load_csv(filename)
-for i in range(len(dataset[0]) - 1):
-    str_column_to_float(dataset, i)
-# convert class column to integers
-str_column_to_int(dataset, len(dataset[0]) - 1)
-# normalize input variables
-minmax = dataset_minmax(dataset)
-normalize_dataset(dataset, minmax)
-# evaluate algorithm
-n_folds = 5
-l_rate = 0.3
-n_epoch = 500
-n_hidden_layers = 2
-n_hidden = [4, 3]
-scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden_layers, n_hidden)
-print('Scores: %s' % scores)
-print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
+    predicted = test_network(network, test_set)
+    actual = [row[-1] for row in fold]
+    accuracy = accuracy_metric(actual, predicted)
+    return accuracy
+
+def br():
+    print('----------------------------------------------')
+
+def print_network(network):
+    br()
+    print('Printing Network')
+    br()
+    for i in range(len(network)):
+        if i == len(network) -1:
+            print('Output layer:')
+        else:
+            print('Hidden layer:', i)
+        br()
+        j = 0
+        for neuron in network[i]:
+            print('Neuron', j, neuron['weights'])
+            j+=1
+
+        br()
+
+def main():
+    # Test Backprop on Seeds dataset
+    seed(11)
+    # load and prepare data
+    filename = 'data.csv'
+    dataset = load_csv(filename)
+    for i in range(len(dataset[0]) - 1):
+        str_column_to_float(dataset, i)
+    # convert class column to integers
+    str_column_to_int(dataset, len(dataset[0]) - 1)
+
+
+    # initialize the hyperparameters
+    l_rate = 0.3
+    n_epoch = 500
+    n_hidden_layers = 2
+    n_hidden = [4, 3]
+    shuffle(dataset)
+    size = len(dataset)
+
+    print('Epoch:', n_epoch, 'Learning rate:', l_rate)
+    print('Number of hidden layers:', n_hidden_layers)
+    print('Number of Neurons in each hidden layer:', n_hidden)
+
+
+    network =  back_propagation(dataset[:size*4//5], l_rate, n_epoch, n_hidden_layers, n_hidden)
+    #print_network(network)
+    score = evaluate(network, dataset[size*4//5:])
+    print('Accuracy: %.3f%%' % (score))
+
+if __name__ == '__main__':
+    main()
