@@ -1,9 +1,17 @@
+import math
 import numpy
 import numpy.random as rand
 
 #supporitng functions ---
 def br():
     print('----------------------------------------------')
+
+def sigmoid(net):
+    return 1/(1+math.exp(-net))
+
+def loss(out, target):
+    return 0.5*(target - out)**2
+
 
 
 
@@ -12,9 +20,17 @@ class Neuron:
         self.weight = [rand.uniform(0, 1)]*w_length
         self.delta = 0
         self.output = 0
+        self.target = 0
 
     def print(self, header):
         print(header,  self.weight)
+
+    def setDelta(self, delta):
+        self.delta = delta
+    def setOutput(self, output):
+        self.output = output
+    def setTarget(self, target):
+        self.target = target
 
 
 class Layer:
@@ -26,6 +42,7 @@ class Layer:
             self.neurons[i] = Neuron(w_length)
 
     def print(self, header):
+        br()
         print(header)
         br()
         print('Number of neurons: ', self.num_neuron)
@@ -61,11 +78,77 @@ class Network:
         br()
 
 
-    def train(self, data):
-        pass
+    def train(self, data, epoch, rate):
+        for i in range(epoch):
+            for att in data:
+                klass = att[self.num_attributes]
+                att[self.num_attributes] = 1
+                self.backpropagation(klass, att, rate)
+
+    def backpropagation(self, klass, att, rate):
+        self.init_targets(klass)
+        self.forward_pass(att)
+        self.backward_pass()
+        self.updateweights(att, rate)
+    # update target values--
+    def init_targets(self, klass):
+        for neuron in self.outputLayer.neurons:
+            neuron.target = 0
+        self.outputLayer.neurons[klass-1].target = 1
+
+    def forward_pass(self, att):
+        features = att
+
+        for layer in self.Hlayers+ [self.outputLayer]:
+            temp_features = []
+            for neuron in layer.neurons:
+                net = numpy.dot(features, neuron.weight)
+                neuron.out = sigmoid(net)
+
+                temp_features.append(neuron.out)
+
+            temp_features.append(1)
+            features = temp_features.copy()
+
+        total_error = 0
+        for neuron in self.outputLayer.neurons:
+            error = loss(neuron.out, neuron.target)
+            total_error += error
+
+
+    def backward_pass(self):
+        #update the deltas
+        for neuron in self.outputLayer.neurons:
+            neuron.delta = (neuron.out - neuron.target)*neuron.out*(1-neuron.out)
+
+        self.update_Hlayer_delta(self.num_Hlayer-1, self.outputLayer)
+        for r_1 in range(self.num_Hlayer-1).__reversed__():
+            r = r_1 +1
+            self.update_Hlayer_delta(r_1, self.Hlayers[r])
 
 
 
+    def update_Hlayer_delta(self, r_1, layer_i):
+        for j in range(self.Hlayers[r_1].num_neuron):
+            neuron_j = self.Hlayers[r_1].neurons[j]
+            sum = 0
+            for neuron_i in layer_i.neurons:
+                sum += neuron_i.delta * neuron_i.weight[j]
+
+            self.Hlayers[r_1].neurons[j].delta = sum * neuron_j.out * (1 - neuron_j.out)
+
+    def updateweights(self, att, rate):
+
+        features = att
+        for layer in self.Hlayers + [self.outputLayer]:
+            temp_features = []
+            for neuron in layer.neurons:
+                for j in range(len(features)):
+                    neuron.weight[j] = neuron.weight[j] - rate*neuron.delta*features[j]
+
+                temp_features.append(neuron.out)
+            temp_features.append(1)
+            features = temp_features.copy()
 
 
 def main():
@@ -88,7 +171,8 @@ def main():
     print('Number of neurons in each hidden layer:', num_neurons)
 
     network = Network(num_attributes, num_classes, num_Hlayer, num_neurons)
-    network.train(dataset)
+
+    network.train(dataset, 10, rate = 0.5)
     network.print()
 
 
