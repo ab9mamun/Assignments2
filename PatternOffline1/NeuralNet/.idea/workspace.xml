@@ -36,8 +36,8 @@
       <file leaf-file-name="neural_alt.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/neural_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4375">
-              <caret line="9" column="23" lean-forward="false" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
+            <state relative-caret-position="362">
+              <caret line="181" column="31" lean-forward="false" selection-start-line="181" selection-start-column="14" selection-end-line="181" selection-end-column="31" />
               <folding>
                 <element signature="e#32#55#0" expanded="true" />
               </folding>
@@ -48,8 +48,8 @@
       <file leaf-file-name="neuralnet.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/neuralnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="903">
-              <caret line="121" column="36" lean-forward="false" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="36" />
+            <state relative-caret-position="38">
+              <caret line="191" column="25" lean-forward="true" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
               <folding>
                 <element signature="e#32#55#0" expanded="true" />
               </folding>
@@ -90,6 +90,12 @@
     <findStrings>
       <find>clone</find>
       <find>[self.outp</find>
+      <find>activate</find>
+      <find>activat</find>
+      <find>forward</find>
+      <find>forward_pass</find>
+      <find>net_input</find>
+      <find>forward_propagate</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -358,16 +364,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/neural_alt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4375">
-          <caret line="9" column="23" lean-forward="false" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
-          <folding>
-            <element signature="e#32#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/neural.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -378,10 +374,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/train.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/neural_alt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="181" column="31" lean-forward="false" selection-start-line="181" selection-start-column="14" selection-end-line="181" selection-end-column="31" />
+          <folding>
+            <element signature="e#32#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/neuralnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="903">
-          <caret line="121" column="36" lean-forward="false" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="36" />
+        <state relative-caret-position="38">
+          <caret line="191" column="25" lean-forward="true" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
           <folding>
             <element signature="e#32#55#0" expanded="true" />
           </folding>
