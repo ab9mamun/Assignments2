@@ -83,7 +83,7 @@ public:
 
     Vector operator*(Vector v){
         Vector w(y * v.z - z * v.y,
-                 -x * v.z + z * v.x,
+                 -(x * v.z - z * v.x),
                  x * v.y - y * v.x);
         return w;
     }
@@ -205,7 +205,7 @@ public:
 
 ///-------global variables------------------
 ifstream scene;
-ofstream stage1, stage2, stage3;
+FILE* stage1, *stage2, *stage3;
 double** top;
 Stack* stk;
 double eye[3]; ///eyeX, eyeY, eyeZ
@@ -306,22 +306,17 @@ void arrayprint(double a[], int l){
 void open_files(){
     scene.open("scene.txt");
 
-    stage1.open("stage1.txt");
-    stage2.open("stage2.txt");
-    stage3.open("stage3.txt");
-
-    stage1.precision(4);
-    stage2.precision(4);
-    stage3.precision(4);
-
+    stage1 = fopen("stage1.txt", "w");
+    stage2 = fopen("stage2.txt", "w");
+    stage3 = fopen("stage3.txt", "w");
 
 }
 
 void close_files(){
     scene.close();
-    stage1.close();
-    stage2.close();
-    stage3.close();
+    fclose(stage1);
+    fclose(stage2);
+    fclose(stage3);
 }
 
 void init(){
@@ -382,16 +377,16 @@ void input_triangle(ifstream& in, double** p1, double** p2, double** p3){
 }
 
 
-void output_triangle(ofstream& out, double** p1t, double** p2t, double**p3t){
+void output_triangle(FILE* out, double** p1t, double** p2t, double**p3t){
     for(int i=0; i<3; i++)
-        out<<p1t[i][0]<<" ";
-    out<<endl;
+        fprintf(out,"%.7lf ", p1t[i][0]);
+    fprintf(out, "\n");
     for(int i=0; i<3; i++)
-        out<<p2t[i][0]<<" ";
-    out<<endl;
+        fprintf(out,"%.7lf ", p2t[i][0]);
+    fprintf(out, "\n");
     for(int i=0; i<3; i++)
-        out<<p3t[i][0]<<" ";
-    out<<endl<<endl;
+        fprintf(out,"%.7lf ", p3t[i][0]);
+    fprintf(out, "\n\n");
 }
 
 int main(){
@@ -532,6 +527,11 @@ int main(){
             matmul(p1t, C, p1, 4, 4, 1);
             matmul(p2t, C, p2, 4, 4, 1);
             matmul(p3t, C, p3, 4, 4, 1);
+            for(int i = 0; i<4; i++){
+                p1t[i][0] = p1t[i][0] / p1t[3][0];
+                p2t[i][0] = p2t[i][0] / p2t[3][0];
+                p3t[i][0] = p3t[i][0] / p3t[3][0];
+            }
 
             output_triangle(stage3, p1t, p2t, p3t);
         }
