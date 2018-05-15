@@ -467,6 +467,7 @@ int main(){
 
             input_triangle(scene, p1, p2, p3);
             ///stage1
+            ///modeling transformation-- top = Transform matrix
             matmul(p1t, top, p1, 4, 4, 1);
             matmul(p2t, top, p2, 4, 4, 1);
             matmul(p3t, top, p3, 4, 4, 1);
@@ -474,13 +475,21 @@ int main(){
             output_triangle(stage1, p1t, p2t, p3t);
 
             ///stage2
+             ///View Transformation---- A = T, B = R
             Vector l(look[0] - eye[0], look[1] - eye[1], look[2] - eye[2]);
             l = l.unit();
+            //cout<<l.x<<" "<<l.y<<" "<<l.z<<endl;
             Vector upp(up[0], up[1], up[2]);
+            //cout<<upp.x<<" "<<upp.y<<" "<<upp.z<<endl;
             Vector r = l*upp;
             r = r.unit();
+            //cout<<r.x<<" "<<r.y<<" "<<r.z<<endl;
+
 
             Vector u = r*l;
+            //u = u.unit();
+            //cout<<u.x<<" "<<u.y<<" "<<u.z<<endl;
+
 
 
             matcopy(A, I);
@@ -495,7 +504,10 @@ int main(){
                 B[2][j] = -l[j];
             }
 
-            matmul(C, A, B);
+            matprint(A);
+            matprint(B);
+
+            matmul(C, B, A);  ///major bugfix -----this should not be AB--------
             matmul(C, C, top);
 
             matmul(p1t, C, p1, 4, 4, 1);
@@ -505,6 +517,7 @@ int main(){
             output_triangle(stage2, p1t, p2t, p3t);
 
             ///stage3 ---
+            ///Projection -- C = P--- need to normalize by weight at the end...
             double fovY, fovX, near, far, t_, r_;
             fovY = gluPerspective[0];
             fovX = gluPerspective[0]*gluPerspective[1];
@@ -527,7 +540,7 @@ int main(){
             matmul(p1t, C, p1, 4, 4, 1);
             matmul(p2t, C, p2, 4, 4, 1);
             matmul(p3t, C, p3, 4, 4, 1);
-            for(int i = 0; i<4; i++){
+            for(int i = 0; i<4; i++){  ///bugfix, normalizing by the weight--
                 p1t[i][0] = p1t[i][0] / p1t[3][0];
                 p2t[i][0] = p2t[i][0] / p2t[3][0];
                 p3t[i][0] = p3t[i][0] / p3t[3][0];

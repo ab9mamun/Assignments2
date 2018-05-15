@@ -48,8 +48,8 @@
       <file leaf-file-name="neuralnet.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/neuralnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-347">
-              <caret line="206" column="21" lean-forward="true" selection-start-line="206" selection-start-column="21" selection-end-line="206" selection-end-column="21" />
+            <state relative-caret-position="378">
+              <caret line="235" column="10" lean-forward="true" selection-start-line="235" selection-start-column="10" selection-end-line="235" selection-end-column="10" />
               <folding>
                 <element signature="e#32#55#0" expanded="true" />
               </folding>
@@ -109,7 +109,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="width" value="907" />
     <option name="height" value="1038" />
@@ -284,7 +284,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.115625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -447,8 +447,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/neuralnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-347">
-          <caret line="206" column="21" lean-forward="true" selection-start-line="206" selection-start-column="21" selection-end-line="206" selection-end-column="21" />
+        <state relative-caret-position="378">
+          <caret line="235" column="10" lean-forward="true" selection-start-line="235" selection-start-column="10" selection-end-line="235" selection-end-column="10" />
           <folding>
             <element signature="e#32#55#0" expanded="true" />
           </folding>
