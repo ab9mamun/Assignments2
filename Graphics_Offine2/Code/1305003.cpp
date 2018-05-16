@@ -517,7 +517,7 @@ int main(){
             output_triangle(stage2, p1t, p2t, p3t);
 
             ///stage3 ---
-            ///Projection -- C = P--- need to normalize by weight at the end...
+            ///Projection -- A = P--- need to normalize by weight at the end...
             double fovY, fovX, near, far, t_, r_;
             fovY = gluPerspective[0];
             fovX = gluPerspective[0]*gluPerspective[1];
