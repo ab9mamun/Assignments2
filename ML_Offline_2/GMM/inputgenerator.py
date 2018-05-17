@@ -44,4 +44,4 @@ def generate_input():
         file.close()
 
     print('Forgetting parameters. Returning datapoints')
-    return xs, ys, k
+    return xs, ys
