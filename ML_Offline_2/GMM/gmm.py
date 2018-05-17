@@ -1,8 +1,11 @@
 import inputgenerator
+import numpy.random as rand
 
 def main():
+    SEED = 17
+    rand.seed(SEED)
     print('GMM starting')
-    inputgenerator.generate_input()
+    xs, ys, k = inputgenerator.generate_input()
 
 
 if __name__ =='__main__':
