@@ -100,7 +100,7 @@ def main():
     tolerance = 0.0001
     ll_old = -100.0
     weight = [1.0/k]*k
-    max_iter = 25
+    max_iter = 40
 
     labels = [1]*len(xs)
 
@@ -128,8 +128,8 @@ def main():
         print('Ship {}:  mean: {} and cov: {}'.format(j+1, mulist[j], covlist[j]))
 
     visual.ioff()
-    visual.plot_image('final.png', xs, ys, labels, mulist, covlist, k)
-    
+    visual.plot_image('iteration{}_final.png'.format(iters), xs, ys, labels, mulist, covlist, k)
+
 
 if __name__ =='__main__':
     main()
