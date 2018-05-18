@@ -33,7 +33,7 @@ def generate_input():
 
 
     print('Creating true image')
-    visual.plot_image('true-map.png', xs, ys,labels, mulist, covlist, k)
+    visual.plot_image('true-map.png', xs, ys,labels, mulist, covlist, k, 1)
    #fig.savefig("true-map.png")
 
     with open('input.txt', 'w') as file:

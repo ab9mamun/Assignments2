@@ -81,6 +81,7 @@ def calculate_ll(xs, ys, mulist, covlist, weight, total, k):
 def main():
     SEED = 17
     rand.seed(SEED)
+    visual.ion()
     print('Program started')
     k = 3
     xs, ys = inputgenerator.generate_input()
@@ -116,18 +117,19 @@ def main():
 
         print('End of {}th iteration..., improvement: {}'.format(iters, improve))
         if iters%5 == 0:
-            visual.plot_image('iteration{}.png'.format(iters), xs, ys, labels, mulist, covlist, k)
+            visual.plot_image('iteration{}.png'.format(iters), xs, ys, labels, mulist, covlist, k, 1)
 
 
 
     print('GMM ended after {} iterations'.format(iters))
-    print('Plotting the final image')
+
+    print('Estimated locations:')
+    for j in range(k):
+        print('Ship {}:  mean: {} and cov: {}'.format(j+1, mulist[j], covlist[j]))
+
+    visual.ioff()
     visual.plot_image('final.png', xs, ys, labels, mulist, covlist, k)
     
-    
-
-
-
 
 if __name__ =='__main__':
     main()

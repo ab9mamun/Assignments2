@@ -1,6 +1,7 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 def draw_ellipse(mu, cov):
     cx = mu[0]
@@ -13,9 +14,18 @@ def draw_ellipse(mu, cov):
 
     plt.plot(cx, cy, '+', mew=5, ms=10)
 
-def plot_image(filename, xs, ys, labels, mulist, covlist, k):
+def plot_image(filename, xs, ys, labels, mulist, covlist, k, sleep_time = 0):
     fig = plt.figure()
+    plt.title(filename)
     plt.scatter(xs, ys, c= labels)
     for j in range(k):
         draw_ellipse(mulist[j], covlist[j])
     fig.savefig(filename)
+    plt.show()
+    time.sleep(sleep_time)
+
+def ioff():
+    plt.ioff()
+
+def ion():
+    plt.ion()
