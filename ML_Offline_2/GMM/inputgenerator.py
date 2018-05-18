@@ -1,7 +1,7 @@
 import numpy
 import numpy.random as rand
 import matplotlib.pyplot as plt
-import sklearn.datasets as sk
+import visual
 
 def normalize(arr):
     n = len(arr)
@@ -31,10 +31,10 @@ def generate_input():
         ys = numpy.concatenate((ys, y))
         labels.append(z)
 
-    fig = plt.figure()
-    plt.scatter(xs, ys, 20, c=labels)
+
     print('Creating true image')
-    fig.savefig("true-map.png")
+    visual.plot_image('true-map.png', xs, ys,labels, mulist, covlist, k)
+   #fig.savefig("true-map.png")
 
     with open('input.txt', 'w') as file:
         file.write(str(k)+'\n')
