@@ -79,12 +79,12 @@ def calculate_ll(xs, ys, mulist, covlist, weight, total, k):
 
 
 def main():
-    SEED = 17
+    SEED = 17 #17, 29, 210
     rand.seed(SEED)
     visual.ion()
     print('Program started')
     k = 3
-    xs, ys = inputgenerator.generate_input()
+    xs, ys = inputgenerator.generate_input(k)
 
     #initial guesses----
     print('Guessing the parameters')
@@ -100,7 +100,7 @@ def main():
     tolerance = 0.0001
     ll_old = -100.0
     weight = [1.0/k]*k
-    max_iter = 40
+    max_iter = 100
 
     labels = [1]*len(xs)
 
@@ -116,8 +116,8 @@ def main():
         ll_old = ll
 
         print('End of {}th iteration..., improvement: {}'.format(iters, improve))
-        if iters%5 == 0:
-            visual.plot_image('iteration{}.png'.format(iters), xs, ys, labels, mulist, covlist, k, 1)
+        if iters%10 == 0:
+            visual.plot_image('iteration{}.png'.format(iters), xs, ys, labels, mulist, covlist, k)
 
 
 
