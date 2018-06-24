@@ -1,97 +1,60 @@
-import cv2
 import numpy as np
-import matplotlib.patches as patches
-import matplotlib.pyplot as plt
 import time
-from PIL import Image
+from common import show_img, cost, get_img_arrays
+import math
 
+def logsearch(test, ref, search_area):
+    d_thresh = ref.shape[0] * ref.shape[1] * 0.001
+    # Each pixel was an integer from 0 to 255 before we normalized them. So minimum difference between
+    # two pixels is 1/255 = 0.0039.. becomes 0.000015... if squared. And we are allowing average squared difference
+    # of 0.001
+    print('Acceptable cost value:', d_thresh)
+    #print(search_area)
 
+    # search width = p, height = q
+    p = search_area[2] - search_area[0]
+    q = search_area[3] - search_area[1]
+    dwidth = 2**(math.floor(math.log2(p/2)) -1)
+    dheight = 2 ** (math.floor(math.log2(q/2)) - 1)
+    coord = center = (p//2, q//2)
+    #print(dwidth, dheight)
 
-def show_img(test_image,ref_image, coord, h, w): # coord = (x, y)
-    imarray = np.array(Image.open(test_image), dtype=np.uint8)
-    imarray2 = np.array(Image.open(ref_image), dtype=np.uint8)
+    d = cost(test, ref, center[1], center[0])
+    while dwidth >=1 and dheight >=1:
+        for dx in [0,1,-1]:
+            for dy in [0, 1, -1]:
+                if dx ==0 and dy == 0:
+                    continue
 
-    size1 = imarray.shape
-    size2 = imarray2.shape
-    # Create figure and axes
-    fig,ax = plt.subplots(1,3, gridspec_kw = {'width_ratios':[size2[1], size1[1],size1[1]]})
-
-
-    # Display the image
-    ax[0].imshow(imarray2) #, shape=imarray.shape[:2])
-    ax[1].imshow(imarray) #, shape=imarray2.shape[:2])
-    ax[2].imshow(imarray)
-
-    # Create a Rectangle patch
-    rect = patches.Rectangle( coord,w,h,linewidth=2,edgecolor='r',facecolor='none')
-   # rect2 = patches.Rectangle((0,0), size1[0], size1[1],linewidth=0.1,edgecolor='w',facecolor='none' )
-
-    # Add the patch to the Axes
-    ax[2].add_patch(rect)
-    #ax[1].add_patch(rect2)
-
-    plt.show()
-
-
-def find_d(test, ref, i, j, ref_h, ref_w):
-    temp = test[i:i+ref_h, j:j+ref_w]
-   # print(temp.shape, ref.shape)
-    d = np.sum(np.square(temp - ref))
-    return d
-
-
-def find_template(test, ref, test_h, test_w, ref_h, ref_w, st):
-    then = st
-    coord = (0, 0)
-    d = float('inf')
-    max_h = test_h - ref_h
-    max_w = test_w - ref_w
-
-    after_print = 0
-    for i in range(0, max_h + 1):  # from 0 to test_h - ref_h
-        if after_print > 1000:
-            now = time.time()
-            if now - then > 1:
-                print('Scanning in row', i, '... d=', d)
-                then = now
-                after_print = 0
-
-        for j in range(0, max_w + 1):  # from 0 to test_w - ref_w
-            # print('Scanning in row', i,'col', j, '... d = ', d)
-            d_cur = find_d(test, ref, i, j, ref_h, ref_w)
-            if d_cur < d:
-                d = d_cur
-                coord = (j, i)
-            if d == 0:
-                return coord
-        after_print += max_w
+                j, i = center[0]+dx*dwidth, center[1] + dy*dheight
+                d_cur = cost(test, ref, i, j)
+                if d_cur<d:
+                    d = d_cur
+                    coord = (j, i)
+                    if d < d_thresh:
+                        return coord
+        dwidth//=2
+        dheight//=2
+        center = coord
 
     return coord
 
-def run(test_image, ref_image):
-    test_orig = cv2.imread(test_image, cv2.IMREAD_GRAYSCALE)
-    ref_orig = cv2.imread(ref_image, cv2.IMREAD_GRAYSCALE)
 
-    test = test_orig / 255.0
-    ref = ref_orig / 255.0
-
-    test_h, test_w = test.shape[:2]
-    ref_h, ref_w = ref.shape[:2]
-    #  print(test_h, test_w, ref_h, ref_w)
-    # print(test)
-
-
+def find_template_2dlog(test, ref):
     st = time.time()
-    coord = find_template(test, ref, test_h, test_w, ref_h, ref_w, st)
 
-    et = time.time()
+    search_area = (0, 0, test.shape[1]- ref.shape[1]-1, test.shape[0] - ref.shape[0]-1) # top left and bottom right
+    coord = logsearch(test, ref, search_area)
+    return coord, time.time() - st
 
-    print('Ans:', coord, "Time taken:{} seconds".format(et - st))
-    show_img(test_image, ref_image, coord, ref_h, ref_w)
-
+def run(test_image, ref_image):
+    test, ref = get_img_arrays(test_image, ref_image)
+    coord , time_diff = find_template_2dlog(test, ref)
+    print('Ans:', coord, "Time taken:{} seconds".format(time_diff))
+    show_img(test_image, ref_image, coord)
 
 def main():
-    run('baby.jpg', 'babyr.jpg')
+    run('mamun2.jpg', 'mamun2r.jpg')
 
 if __name__ == '__main__':
     main()

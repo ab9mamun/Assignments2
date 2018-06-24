@@ -9,8 +9,9 @@ def get_img_arrays(test_image, ref_image):
     ref = cv2.imread(ref_image, cv2.IMREAD_GRAYSCALE) / 255.0
     return test, ref
 
-def find_d(test, ref, i, j):
+def  cost(test, ref, i, j):
     temp = test[i:i+ref.shape[0], j:j+ref.shape[1]]
+    #print(j, i)
     return np.sum(np.square(temp - ref))
 
 

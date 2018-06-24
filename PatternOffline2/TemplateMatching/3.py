@@ -2,37 +2,31 @@ import numpy as np
 import time
 from common import show_img, cost, get_img_arrays
 
-def find_template_exhaustive(test, ref):
+def find_template_heirarchical(test, ref):
     st = time.time()
     then = st
-    d_thresh = ref.shape[0] * ref.shape[1] * 0.001
-    #Each pixel was an integer from 0 to 255 before we normalized them. So minimum difference between
-    #two pixels is 1/255 = 0.0039.. becomes 0.000015... if squared. And we are allowing average squared difference
-    #of 0.001
-
-    print('Acceptable cost value:', d_thresh)
     coord = (0, 0)
     d = float('inf')
     max_h, max_w =  test.shape[0]- ref.shape[0], test.shape[1] - ref.shape[1]
 
     after_print = 0
     for i in range(0, max_h + 1):  # from 0 to test_h - ref_h
-        #log---------
+        #msg---------
         if after_print > 1000:
             now = time.time()
             if now - then > 1:
                 print('Scanning in row', i, '... d=', d)
                 then = now
                 after_print = 0
-        ###logend-----
+        ###end-----
 
         for j in range(0, max_w + 1):  # from 0 to test_w - ref_w
             d_cur = cost(test, ref, i, j)
             if d_cur < d:
                 d = d_cur
                 coord = (j, i)
-                if d<d_thresh:
-                    return coord, time.time() - st
+            if d == 0:
+                return coord
         after_print += max_w
 
     return coord, time.time() - st
@@ -40,7 +34,7 @@ def find_template_exhaustive(test, ref):
 def run(test_image, ref_image):
     test, ref = get_img_arrays(test_image, ref_image)
 
-    coord , time_diff = find_template_exhaustive(test, ref)
+    coord , time_diff = find_template_heirarchical(test, ref)
     print('Ans:', coord, "Time taken:{} seconds".format(time_diff))
     show_img(test_image, ref_image, coord)
 
