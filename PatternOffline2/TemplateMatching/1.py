@@ -32,20 +32,21 @@ def find_template_exhaustive(test, ref):
                 d = d_cur
                 coord = (j, i)
                 if d<d_thresh:
-                    return coord, time.time() - st
+                    return coord, False, time.time() - st
         after_print += max_w
 
-    return coord, time.time() - st
+    return coord, True, time.time() - st
 
 def run(test_image, ref_image):
     test, ref = get_img_arrays(test_image, ref_image)
 
-    coord , time_diff = find_template_exhaustive(test, ref)
-    print('Ans:', coord, "Time taken:{} seconds".format(time_diff))
+    coord , completed,  time_diff = find_template_exhaustive(test, ref)
+    print('Program ended', completed * 'normally.', (not completed) * 'at accepted cost.')
+    print('Ans:', coord, "Time taken: {} seconds".format(time_diff))
     show_img(test_image, ref_image, coord)
 
 def main():
-    run('baby.jpg', 'babyr.jpg')
+    run('mamun.jpg', 'mamunr.jpg')
 
 if __name__ == '__main__':
     main()
