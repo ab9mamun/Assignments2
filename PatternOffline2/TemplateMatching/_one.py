@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from common import show_img, cost, get_img_arrays
+from common import show_img, cost, get_img_arrays, get_img_arrays_int
 
 def find_template_exhaustive(test, ref):
     st = time.time()
@@ -46,7 +46,7 @@ def run(test_image, ref_image):
     show_img(test_image, ref_image, coord)
 
 def main():
-    run('mamun.jpg', 'mamunr.jpg')
+    run('baby.jpg', 'babyr.jpg')
 
 if __name__ == '__main__':
     main()
