@@ -56,7 +56,7 @@ def run(test_image, ref_image):
     show_img(test_image, ref_image, coord)
 
 def main():
-    run('baby.jpg', 'babyr.jpg')
+    run('baby.jpg', 'babyr2.jpg')
 
 if __name__ == '__main__':
     main()

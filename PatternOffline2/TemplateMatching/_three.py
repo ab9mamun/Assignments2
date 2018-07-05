@@ -38,12 +38,12 @@ def find_template_heirarchical(test, ref, level):
 def run(test_image, ref_image):
     test, ref = get_img_arrays_int(test_image, ref_image)
 
-    coord , time_diff = find_template_heirarchical(test, ref, level = 4)
+    coord , time_diff = find_template_heirarchical(test, ref, level = 3)
     print('Ans:', coord, "Time taken:{} seconds".format(time_diff))
     show_img(test_image, ref_image, coord)
 
 def main():
-    run('baby.jpg', 'babyr.jpg')
+    run('baby.jpg', 'babyr2.jpg')
 
 if __name__ == '__main__':
     main()
