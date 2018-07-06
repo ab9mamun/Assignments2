@@ -1,5 +1,8 @@
 import pandas as pd
 
-arr = pd.read_excel("ratings_train.xlsx",header=None)
 
-print(arr.)
+l = [(1,2), (4, 44), (6, 22)]
+print(l)
+l.sort(key=lambda x:x[1], reverse=True)
+
+print(l)

@@ -103,6 +103,16 @@ def trainUV(X, k, lamU, lamV):
 
     return U, V
 
+def recommend(user, X, U, V):
+    mat = np.dot(U, V.T)
+    ratings  = mat[user]
+    products = []
+    for i in range(len(ratings)):
+        if X[user, i] == -1: #only from the products this user didn't rate
+            products.append((i, ratings[i]))
+
+    products.sort(key=lambda x: x[1], reverse=True)
+    return products[:5]
 
 def main():
     start = time.time()
@@ -119,8 +129,8 @@ def main():
     results = {}
 
 
-    for lam in [0.01, 0.1, 1, 10]:
-        for k in [10, 20, 40]:
+    for lam in [0.1]: #[0.01, 0.1, 1, 10]:
+        for k in [40]: #[10, 20, 40]:
             print('Training for lam: {} k: {}'.format(lam, k))
             U, V = trainUV(train, k, lam, lam)
             templ = RMSE(train, U, V)
@@ -133,14 +143,16 @@ def main():
                 l = templ
                 choice = {'U': U, 'V': V, 'k':k, 'lam': lam}
 
+            list = recommend(0, validate, U_val, V)
+
+            print('Recommended for User',0,'(of validation list):', list)
+
 
     print('Choice: ', choice['lam'], choice['k'])
     print(results)
 
     end = time.time()
     print('Time taken: {} seconds'.format(end-start))
-
-
 
 
 if __name__=='__main__':
