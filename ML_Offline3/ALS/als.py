@@ -6,7 +6,7 @@ def get_data():
     train = pd.read_excel("ratings_train.xlsx", header=None)
     validate = pd.read_excel('ratings_validate.xlsx', header=None)
     #test = pd.read_excel('ratings_test.xlsx', header=None)
-    return train.values, validate.values, None #test.values
+    return train.values, validate.values, validate.values #test.values
 
 
 
@@ -105,7 +105,7 @@ def trainUV(X, k, lamU, lamV):
 
 def recommend(user, X, U, V):
     mat = np.dot(U, V.T)
-    print(U, V)
+    #print(U, V)
     ratings  = mat[user]
     #print(ratings.shape, ratings)
    # print(X.shape, X)
@@ -120,21 +120,12 @@ def recommend(user, X, U, V):
     products.sort(key=lambda x: x[1], reverse=True)
     return products[:5]
 
-def main():
-    start = time.time()
-    np.random.seed(1)
 
-    train, validate, test = get_data() #'train.csv', 'validation.csv', 'test.csv')
-    #validate = get_data('validation.csv', 20)
-    #test = get_data('test.csv', 20)
-    print(train.shape, validate.shape)
 
-    #start = time.time()
+def trainall(train, validate, test):
     l = float('inf')
     choice = {}
     results = {}
-
-
     for lam in [0.01, 0.1, 1, 10]:
         for k in [10, 20, 40]:
             print('Training for lam: {} k: {}'.format(lam, k))
@@ -142,26 +133,61 @@ def main():
             templ = RMSE(train, U, V)
             results['train_'+str(lam)+' '+str(k)] = templ
 
+
             U_val = alsU(validate, None, V, lam)
            # print(U_val)
             templ = RMSE(validate, U_val, V)
             results['validate_' + str(lam) + ' ' + str(k)] = templ
+
             if templ < l:
                 l = templ
                 choice = {'U': U, 'V': V, 'k':k, 'lam': lam}
 
+            U_test = alsU(test, None, V, lam)
+            templ = RMSE(test, U_test, V)
+            results['test_' + str(lam) + ' ' + str(k)] = templ
 
-    rec = recommend(2, train, U, V)
-    print('Recommended for User',2,'(item, possible rating):', rec)
+    return choice, results
 
+def pretrained():
+    U = np.loadtxt('U.txt')
+    V = np.loadtxt('V.txt')
+    choice = {'U': U, 'V': V, 'k':40, 'lam': 1}
+    results = {'train_1 40': 8.086742185011456, 'validate_1 40': 1.9585765614249857}
+    return choice, results
+
+
+def run(trained=False):
+    start = time.time()
+    np.random.seed(1)
+
+    train, validate, test = get_data()  # 'train.csv', 'validation.csv', 'test.csv')
+    # validate = get_data('validation.csv', 20)
+    # test = get_data('test.csv', 20)
+    print(train.shape, validate.shape)
+
+    # start = time.time()
+    if trained:
+        print('Using pretrained parameters..')
+        choice, results = pretrained()
+    else:
+        choice, results = trainall(train, validate, test)
+
+    rec = recommend(2, train, choice['U'], choice['V'])
+    print('Recommended for User', 2, '(item, possible rating):', rec)
 
     print('Choice: ', choice['lam'], choice['k'])
     print(results)
 
     end = time.time()
-    print('Time taken: {} seconds'.format(end-start))
-    np.savetxt('U.txt', choice['U'])
-    np.savetxt('V.txt', choice['V'])
+    print('Time taken: {} seconds'.format(end - start))
+
+    if not trained:
+        np.savetxt('U.txt', choice['U'])
+        np.savetxt('V.txt', choice['V'])
+
+def main():
+   run(True)
 
 
 if __name__=='__main__':
