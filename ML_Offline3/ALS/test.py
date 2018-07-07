@@ -1,8 +1,12 @@
 import pandas as pd
+import numpy as np
 
+np.random.seed(1)
+V = np.random.randn(100, 1)
+choice = {'V':V}
+np.savetxt('save.txt', choice['V'])
+#]) #choice['V'])
 
-l = [(1,2), (4, 44), (6, 22)]
-print(l)
-l.sort(key=lambda x:x[1], reverse=True)
-
-print(l)
+Vagain = np.loadtxt('save.txt')
+print(Vagain)
+print(np.sum(V - Vagain))

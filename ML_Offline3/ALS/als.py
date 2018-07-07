@@ -60,7 +60,7 @@ def alsU(X, U, V, lamU):
         matToInv = s + lamU * np.identity(U.shape[1])
        # print(matToInv.shape, s.shape, s2.shape)
         U[n] = np.dot(np.linalg.inv(matToInv), s2).T
-        return U
+    return U
 
 def als(X, U, V, lamU, lamV):
     U = alsU(X, U, V, lamU)
@@ -105,11 +105,17 @@ def trainUV(X, k, lamU, lamV):
 
 def recommend(user, X, U, V):
     mat = np.dot(U, V.T)
+    print(U, V)
     ratings  = mat[user]
+    #print(ratings.shape, ratings)
+   # print(X.shape, X)
     products = []
-    for i in range(len(ratings)):
-        if X[user, i] == -1: #only from the products this user didn't rate
-            products.append((i, ratings[i]))
+    for item in range(ratings.shape[0]):
+       # print("I'm entering here")
+        if X[user, item] == -1: #only from the products this user didn't rate
+          #  print("I'm here")
+            products.append((item, ratings[item]))
+           # print(i, ratings[i])
 
     products.sort(key=lambda x: x[1], reverse=True)
     return products[:5]
@@ -129,23 +135,24 @@ def main():
     results = {}
 
 
-    for lam in [0.1]: #[0.01, 0.1, 1, 10]:
-        for k in [40]: #[10, 20, 40]:
+    for lam in [0.01, 0.1, 1, 10]:
+        for k in [10, 20, 40]:
             print('Training for lam: {} k: {}'.format(lam, k))
             U, V = trainUV(train, k, lam, lam)
             templ = RMSE(train, U, V)
             results['train_'+str(lam)+' '+str(k)] = templ
 
             U_val = alsU(validate, None, V, lam)
+           # print(U_val)
             templ = RMSE(validate, U_val, V)
             results['validate_' + str(lam) + ' ' + str(k)] = templ
             if templ < l:
                 l = templ
                 choice = {'U': U, 'V': V, 'k':k, 'lam': lam}
 
-            list = recommend(0, validate, U_val, V)
 
-            print('Recommended for User',0,'(of validation list):', list)
+    rec = recommend(2, train, U, V)
+    print('Recommended for User',2,'(item, possible rating):', rec)
 
 
     print('Choice: ', choice['lam'], choice['k'])
@@ -153,6 +160,8 @@ def main():
 
     end = time.time()
     print('Time taken: {} seconds'.format(end-start))
+    np.savetxt('U.txt', choice['U'])
+    np.savetxt('V.txt', choice['V'])
 
 
 if __name__=='__main__':
