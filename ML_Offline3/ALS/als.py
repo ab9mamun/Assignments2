@@ -6,8 +6,7 @@ def get_data():
     train = pd.read_excel("ratings_train.xlsx", header=None)
     validate = pd.read_excel('ratings_validate.xlsx', header=None)
     #test = pd.read_excel('ratings_test.xlsx', header=None)
-    return train.values, validate.values, validate.values #test.values
-
+    return train.values[:100], validate.values[:20], validate.values[20:40] #test.values
 
 
 
@@ -98,7 +97,7 @@ def trainUV(X, k, lamU, lamV):
 
         if iters%10==0:
             #end = time.time()
-            print('Still training...')
+            print('Still training... {}%'.format(iters*2))
             #start = end
 
     return U, V
@@ -122,12 +121,12 @@ def recommend(user, X, U, V):
 
 
 
-def trainall(train, validate, test):
+def trainall(train, validate, test, ks, lams):
     l = float('inf')
     choice = {}
     results = {}
-    for lam in [0.01, 0.1, 1, 10]:
-        for k in [10, 20, 40]:
+    for lam in lams:
+        for k in ks:
             print('Training for lam: {} k: {}'.format(lam, k))
             U, V = trainUV(train, k, lam, lam)
             templ = RMSE(train, U, V)
@@ -157,7 +156,7 @@ def pretrained():
     return choice, results
 
 
-def run(trained=False):
+def run(ks, lams, rec_for, trained=False):
     start = time.time()
     np.random.seed(1)
 
@@ -170,11 +169,16 @@ def run(trained=False):
     if trained:
         print('Using pretrained parameters..')
         choice, results = pretrained()
+        #For verification
+        U_val = alsU(test, None, choice['V'], choice['lam'])
+        templ = RMSE(test, U_val, choice['V'])
+        print('Loss in test:', templ)
+        results['test_'+str(choice['lam'])+'_'+str(choice['k'])] = templ
     else:
-        choice, results = trainall(train, validate, test)
+        choice, results = trainall(train, validate, test, ks, lams)
 
-    rec = recommend(2, train, choice['U'], choice['V'])
-    print('Recommended for User', 2, '(item, possible rating):', rec)
+    rec = recommend(rec_for, train, choice['U'], choice['V'])
+    print('Recommended for User', rec_for, '(item, possible rating):', rec)
 
     print('Choice: ', choice['lam'], choice['k'])
     print(results)
@@ -187,8 +191,8 @@ def run(trained=False):
         np.savetxt('V.txt', choice['V'])
 
 def main():
-   run(True)
-
+   #run(True)
+    run(ks=[10], lams=[0.1], rec_for=2, trained=False)
 
 if __name__=='__main__':
     main()
