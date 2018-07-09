@@ -123,7 +123,9 @@ public:
      void set(double x, double y, double z){
         this->x = x; this->y = y; this->z = z;
     }
-
+    void print(){
+        printf("%.2lf %.2lf %.2lf\n", x, y, z);
+    }
 };
 
 class Color{
@@ -142,12 +144,34 @@ public:
         this->g = g;
         this->b = b;
     }
+    void print(){
+        cout<<r<<" "<<g<<" "<<b<<endl;
+    }
 };
 
 class Triangle{
 public:
     Point points[3];
     Color color;
+
+    Triangle(Point A, Point B, Point C, Color col){
+        points[0] = A;
+        points[1] = B;
+        points[2] = C;
+        color = col;
+    }
+    Triangle(Point points[3], Color col){
+        for (int i=0; i<3; i++)
+            this->points[i] = points[i];
+
+        color = col;
+    }
+    void print(){
+        for(int i=0; i<3; i++)
+            points[i].print();
+        color.print();
+    }
+
 };
 
 
@@ -159,6 +183,7 @@ double dx, dy;
 double top_y, left_x;
 double** z_buffer;
 Color** frame_buffer;
+vector<Triangle> triangles;
 
 ///==
 
@@ -167,6 +192,22 @@ void read_data(){
 ifstream config("config.txt"), stage3("stage3.txt");
 config>>screen_width>>screen_height;
 config>>x_left_limit>>y_bottom_limit;
+config>>z_front_limit>>z_rear_limit;
+
+///read triangles--
+double x, y, z;
+while(stage3>>x>>y>>z){
+    Point points[3];
+    points[0].set(x,y,z);
+    stage3>>x>>y>>z;
+    points[1].set(x,y,z);
+    stage3>>x>>y>>z;
+    points[2].set(x,y,z);
+
+    Color col(rand()%256, rand()%256, rand()%256);
+    triangles.push_back(Triangle(points, col));
+
+}
 
 config.close();
 stage3.close();
@@ -180,11 +221,10 @@ void pre_process(){
 void initialize_z_buffer_and_frame_buffer(){
 
     z_buffer = new double*[screen_width];
+    frame_buffer = new Color*[screen_width];
+
     for(int i=0; i<screen_width; i++){
         z_buffer[i] = new double[screen_height];
-    }
-    frame_buffer = new Color*[screen_width];
-    for(int i=0; i<screen_width; i++){
         frame_buffer[i] = new Color[screen_height];
     }
 }
@@ -212,18 +252,42 @@ void save(){
     ///save z_buffer.txt
 }
 
-void free_memory(){
+void post_process(){
+    cout<<"Config"<<endl;
+    cout<<screen_width<<" "<<screen_height<<endl;
+    cout<<x_left_limit<<endl;
+    cout<<y_bottom_limit<<endl;
+    cout<<z_front_limit<<" "<<z_rear_limit<<endl;
+    cout<<"Stage3"<<endl;
+    for(int i=0; i<triangles.size(); i++){
+        triangles[i].print();
+    }
 
+}
+
+void free_memory(){
+    for(int i=0; i<screen_width; i++){
+        delete[] z_buffer[i];
+        delete frame_buffer[i];
+    }
+    delete[] z_buffer;
+    delete[] frame_buffer;
 }
 
 int main(){
 
+    srand(34);
+
     read_data();
     pre_process();
+
     initialize_z_buffer_and_frame_buffer();
     pre_process2();
+
     apply_procedure();
     save();
+
+    post_process();
     free_memory();
 
     return 0;
