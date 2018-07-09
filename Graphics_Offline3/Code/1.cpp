@@ -153,23 +153,40 @@ class Triangle{
 public:
     Point points[3];
     Color color;
+    double a, b, c, d; ///coefficients of plane equation#ax+by+cz=d
 
     Triangle(Point A, Point B, Point C, Color col){
         points[0] = A;
         points[1] = B;
         points[2] = C;
         color = col;
+        find_plane();
     }
     Triangle(Point points[3], Color col){
         for (int i=0; i<3; i++)
             this->points[i] = points[i];
 
         color = col;
+        find_plane();
     }
     void print(){
         for(int i=0; i<3; i++)
             points[i].print();
         color.print();
+    }
+
+    void find_plane(){
+        Vector vab = points[1] - points[0];
+        Vector vac = points[2] - points[0];
+        Vector norm = vab*vac;
+        norm = norm.unit();
+        a = norm.x;
+        b = norm.y;
+        c = norm.z;
+        d = a*points[0].x + b*points[0].y + c*points[0].z;
+    }
+    double find_z(double x, double y){
+        return (d - a*x - b*y)/c;
     }
 
 };
@@ -180,7 +197,7 @@ int screen_height, screen_width;
 double x_left_limit, x_right_limit, y_top_limit, y_bottom_limit;
 double z_front_limit, z_rear_limit;
 double dx, dy;
-double top_y, left_x;
+double bottom_y, left_x;
 double** z_buffer;
 Color** frame_buffer;
 vector<Triangle> triangles;
@@ -213,9 +230,17 @@ config.close();
 stage3.close();
 }
 
+
+
+
+
 void pre_process(){
-    screen_width = 500;
-    screen_height = 300;
+    x_right_limit = -x_left_limit;
+    y_top_limit = -y_bottom_limit;
+    dx = x_right_limit*2/screen_width;
+    dy = y_top_limit*2/screen_width;
+    bottom_y = y_bottom_limit + dy/2;
+    left_x = x_left_limit + dx/2;
 }
 
 void initialize_z_buffer_and_frame_buffer(){
@@ -226,7 +251,11 @@ void initialize_z_buffer_and_frame_buffer(){
     for(int i=0; i<screen_width; i++){
         z_buffer[i] = new double[screen_height];
         frame_buffer[i] = new Color[screen_height];
+
+        for(int j=0; j<screen_height; j++)
+            z_buffer[i][j] = z_rear_limit+1;
     }
+
 }
 void pre_process2(){
     for(int i=0; i<200; i++){
@@ -237,7 +266,11 @@ void pre_process2(){
 }
 
 void apply_procedure(){
+    double bottom_scanline, top_scanline, left_scanline, right_scanline;
 
+    for(int k=0; k<triangles.size(); k++){
+
+    }
 }
 
 void save(){
@@ -250,6 +283,15 @@ void save(){
     image.save_image("1.bmp");
 
     ///save z_buffer.txt
+    FILE* z_txt = fopen("z_buffer.txt", "w");
+    for(int j=0; j<screen_height; j++){
+        for(int i=0; i<screen_width; i++){
+            if(z_buffer[i][j]<z_rear_limit)
+               fprintf(z_txt, ".6lf\t", z_buffer[i][j]);
+        }
+        fprintf(z_txt, "\n");
+    }
+    fclose(z_txt);
 }
 
 void post_process(){
