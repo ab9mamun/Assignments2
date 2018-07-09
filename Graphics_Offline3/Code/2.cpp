@@ -237,6 +237,9 @@ public:
         this->tr_id = tr_id;
         this->x_at_ymin = x_at_ymin;
     }
+    void print(){
+        cout<<"TRID: "<<tr_id<<" ymin: "<<ymin<<" ymax: "<<ymax<<" x_at_ymin: "<<x_at_ymin<<" del_x: "<<del_x<<endl;
+    }
 };
 
 ///============================Global Variables========================
@@ -449,33 +452,38 @@ void pre_process(){
 }
 
 
-void add_edges(Triangle t){
-    int id, row1, row2, row3;
-    double x1, x2, x3, y1, y2, y3;
+void add_edge(double x1, double y1, double x2, double y2, int id){
+    if(eq(y1, y2)) return;
+    if(y1 > y2){
+        swap(x1, x2);
+        swap(y1,y2);
+    }
+    int row = y_to_row(y1);
     double del_x;
 
-    id = t.id;
+    if(eq(x1, x2)) del_x = 0;
+    else del_x = (y2-y1)/(x2-x1);
+
+    Edge e(y1, y2, del_x, id, x1);
+    edge_table[row].push_back(e);
+}
+
+void add_edges(Triangle t){
+
+    double x1, x2, x3, y1, y2, y3;
+    int id = t.id;
+
     y1 = t.points[0].y;
     y2 = t.points[1].y;
     y3 = t.points[2].y;
     x1 = t.points[0].x;
     x2 = t.points[1].x;
     x3 = t.points[2].x;
-    row1 = y_to_row(y1);
-    row2 = y_to_row(y2);
-    row3 = y_to_row(y3);
 
-
-    ///edge between points ---
-    //1 & 2
-    if(y1 < y2) {
-        if(eq(x1, x2)) del_x = 0;
-        else del_x = (y2-y1)/(x1-x2);
-
-        Edge e(y1, y2, del_x, id, x1);
-        edge_table[row1].push_back(e);
-    }
-
+    ///edges between points ---
+    add_edge(x1, y1, x2, y2, id);
+    add_edge(x1, y1, x3, y3, id);
+    add_edge(x3, y3, x2, y2, id);
 }
 
 void initialize_edge_table_and_polygon_table(){
@@ -507,6 +515,15 @@ void apply_procedure(){
     double leftest, rightest;
     int kase;
     double x, y, z;
+
+    kase = 0;
+    for (int i=0; i<screen_height; i++){
+        kase+= edge_table[i].size();
+        for(int j=0; j<edge_table[i].size(); j++){
+            cout<<"Edge: "; edge_table[i][j].print();
+        }
+    }
+    cout<<"TOTAL EDGES: "<<kase<<endl;
 
 
 }//end_function
@@ -557,7 +574,7 @@ int main(){
     apply_procedure();
     save();
 
-    post_process();
+   // post_process();
     free_memory();
 
     return 0;
