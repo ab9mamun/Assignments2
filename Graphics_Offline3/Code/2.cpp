@@ -263,6 +263,12 @@ vector<Triangle> triangles;
 
 
 
+bool compare_depth(pair<int, pair<double, double> >& a, pair<int, pair<double, double> >& b){
+    int id1, id2;
+    id1 = a.first;
+    id2 = b.first;
+    return triangles[id1].find_z(a.second.first, a.second.second) < triangles[id2].find_z(b.second.first, b.second.second);
+}
 
 
 ///==
@@ -282,6 +288,7 @@ bool PointInTriangle (Point pt, Point v1, Point v2, Point v3)
 
     return ((b1 == b2) && (b2 == b3));
 }
+
 
 
 ///helper--
@@ -568,24 +575,34 @@ void apply_procedure(){
             Color color(0,0,0);
             x = e.x_at_ymin;
             y = e.ymin;
+
+            vector< pair<int, pair<double, double> > > active_triangles;
             for(int tr_id=0; tr_id<active_polygon_table.size(); tr_id++){
                 if(!active_polygon_table[tr_id]) continue;
                 //if(!Point)
-                Triangle t = triangles[tr_id];
-                if(!PointInTriangle(Point(x, y, 0), t.points[0], t.points[1], t.points[2])) continue;
-                z = t.find_z(x, y);
-                if(z < z_min){
-                    z_min = z;
-                    color = t.color;
-                }
+                active_triangles.push_back(make_pair(tr_id, make_pair(x, y)));
             }
+            sort(active_triangles.begin(), active_triangles.end(), compare_depth);
             ///color upto the next edge
             Edge next = active_edge_table[k+1];
             left_col = x_to_col(x);
             right_col = x_to_col(next.x_at_ymin);
 
             for(int col = left_col; col <= right_col; col++){
-                frame_buffer[col][screen_height-row-1] = color;
+                ///clipping--------
+                x = left_x + col*dx;
+                y = bottom_y + row*dy;
+                int winner = -1;
+                for(int k=0; k<active_triangles.size(); k++){
+                    int id = active_triangles[k].first;
+                    Triangle t  = triangles[id];
+                    if(!PointInTriangle(Point(x,y,0), t.points[0], t.points[1], t.points[2])) continue;
+                    z = t.find_z(x, y);
+                    if(z >= z_rear_limit) break;
+                    winner = id;
+                    break;
+                }
+                if(winner >=0) frame_buffer[col][screen_height-row-1] = triangles[winner].color;
             }
 
         }

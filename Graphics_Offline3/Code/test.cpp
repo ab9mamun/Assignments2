@@ -12,10 +12,9 @@ int main(){
     vec.push_back(22);
     vec.push_back(88);
     vec.erase(vec.begin()+ 1);
-
-    for(int i=0; i<vec.size(); i++){
-        cout<<vec[i]<<endl;
-    }
+    pair<double, double> p;
+    p = make_pair(2.2, 3.3);
+    cout<<p.first<<" "<<p.second<<endl;
     return 0;
 }
 
