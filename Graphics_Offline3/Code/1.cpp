@@ -25,6 +25,11 @@ T min(T a, T b, T c){
 }
 
 
+bool eq(double x, double y){
+    return abs(x-y) < 0.0000001;
+}
+
+
 class Vector{
 
 public:
@@ -212,7 +217,30 @@ double** z_buffer;
 Color** frame_buffer;
 vector<Triangle> triangles;
 
+
+
+
+
+
 ///==
+
+double sign (Point p1, Point p2, Point p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool PointInTriangle (Point pt, Point v1, Point v2, Point v3)
+{
+    bool b1, b2, b3;
+
+    b1 = sign(pt, v1, v2) < 0.0;
+    b2 = sign(pt, v2, v3) < 0.0;
+    b3 = sign(pt, v3, v1) < 0.0;
+
+    return ((b1 == b2) && (b2 == b3));
+}
+
+
 
 void read_data(){
 
@@ -220,6 +248,8 @@ ifstream config("config.txt"), stage3("stage3.txt");
 config>>screen_width>>screen_height;
 config>>x_left_limit>>y_bottom_limit;
 config>>z_front_limit>>z_rear_limit;
+
+
 
 ///read triangles--
 double x, y, z;
@@ -298,7 +328,7 @@ int x_to_col(double x){
 }
 
 //sets right, returns left
-double get_intersection_y_to_x(Triangle t, double y, double& right){
+double get_intersection_y_to_x(Triangle t, double y, double& right, int& kase){
     double x1 = t.points[0].x;
     double y1 = t.points[0].y;
     double x2 = t.points[1].x;
@@ -308,60 +338,129 @@ double get_intersection_y_to_x(Triangle t, double y, double& right){
     double int1, int2;
 
     ///if two points are on the line
-    if(y == y1 && y==y2){
-        right = max(x1,x2);
-        return min(x1, x2);
+
+    if(eq(y,y1)){
+
+        if(eq(y, y2)){
+            right = max(x1,x2);
+            kase = 1;
+            return min(x1, x2);
+        }
+        if (eq(y, y3)){
+            right = max(x1, x3);
+            kase = 2;
+            return min(x1, x3);
+        }
+        right = x1;
+        kase = 3;
+        return x1;
     }
-    if(y==y2 && y==y3){
-        right = max(x2, x3);
-        return min(x2, x3);
+    if(eq(y,y2)){
+        if(eq(y,y3)){
+            right = max(x2, x3);
+            kase = 4;
+            return min(x2, x3);
+        }
+        right = x2;
+        kase =5;
+        return x2;
     }
-    if (y==y3 && y==y1){
-        right = max(x1, x3);
-        return min(x1, x3);
+    if (eq(y, y3)){
+        right = x3;
+        kase = 6;
+        return x3;
     }
 
     ///if two points are on the same side
     if ((y2-y)*(y3-y) >= 0){
+        if(eq(y1, y2)){
+            right = max(x1,x2);
+            kase = 7;
+            return min(x1, x2);
+        }
+        if(eq(y1, y3)){
+            right = max(x1,x3);
+            kase = 7;
+            return min(x1, x3);
+        }
         int1 = x2 + (x1-x2)/(y1-y2) * (y - y2);
         int2 = x3 + (x1-x3)/(y1-y3) * (y-y3);
+        right = max(int1, int2);
+        kase = 7;
+        return min(int1, int2);
     }
-    else if ((y3-y)*(y1-y) >= 0){
+    if ((y3-y)*(y1-y) >= 0 ){
+        if(eq(y2, y3)){
+            right = max(x2,x3);
+            kase = 8;
+            return min(x2, x3);
+        }
+        if(eq(y1, y2)){
+            right = max(x1,x2);
+            kase = 8;
+            return min(x1, x2);
+        }
+
         int1 = x3 + (x2-x3)/(y2-y3) * (y - y3);
         int2 = x1 + (x2-x1)/(y2-y1) * (y-y1);
+        right = max(int1, int2);
+        kase = 8;
+        return min(int1, int2);
     }
-    else if ((y1-y)*(y2-y) >= 0){
+    if ((y1-y)*(y2-y) >= 0){
+        if(eq(y3, y2)){
+            right = max(x2,x3);
+            kase = 9;
+            return min(x2, x3);
+        }
+        if(eq(y1, y3)){
+            right = max(x1,x3);
+            kase = 9;
+            return min(x1, x3);
+        }
+
         int1 = x1 + (x3-x1)/(y3-y1) * (y - y1);
         int2 = x2 + (x3-x2)/(y3-y2) * (y - y2);
+        right = max(int1, int2);
+        kase = 9;
+        return min(int1, int2);
 
     }
-    right = max(int1, int2);
-    return min(int1, int2);
+    ASSERT(false, "Should not reach here\n");
 }
 
 void apply_procedure(){
     double bottom_scanline, top_scanline, left_scanline, right_scanline;
     double bottom_row, top_row, left_col, right_col;
     double lowest, highest, leftmost, rightmost;
+    double leftest, rightest;
+    int kase;
     double x, y, z;
 
     for(int k=0; k<triangles.size(); k++){
         Triangle t = triangles[k];
         lowest = min(t.points[0].y, t.points[1].y, t.points[2].y);
         highest = max(t.points[0].y, t.points[1].y, t.points[2].y);
-        bottom_row = y_to_row(lowest);
-        top_row = y_to_row(highest);
+        bottom_row = y_to_row(lowest) +1;
+        top_row = y_to_row(highest)-1;
+
+        leftest = min(t.points[0].x, t.points[1].x, t.points[2].x);
+        rightest = max(t.points[0].x, t.points[1].x, t.points[2].x);
 
         for(int row = bottom_row; row <= top_row; row++){
-            leftmost = get_intersection_y_to_x(t, y, rightmost);  //min(t.points[0].x, t.points[1].x, t.points[2].x);
-
+            leftmost = get_intersection_y_to_x(t, y, rightmost, kase);  //min(t.points[0].x, t.points[1].x, t.points[2].x);
             left_col = x_to_col(leftmost);
             right_col = x_to_col(rightmost);
 
             y = bottom_y + row*dy;
+            if (y < lowest || y>highest) continue;
+
             for(int col = left_col; col<=right_col; col++){
                 x = left_x + col*dx;
                 ///check may be added-- if normal to the screen in (x,y) intersects the triangle
+                if (x < leftest || x > rightest) continue;
+                if (!PointInTriangle(Point(x, y, 0), t.points[0], t.points[1], t.points[2])) continue;
+
                 z = t.find_z(x, y);
                 if(z<z_buffer[col][row]){
                     z_buffer[col][row] = z;
@@ -385,8 +484,11 @@ void save(){
     FILE* z_txt = fopen("z_buffer.txt", "w");
     for(int j=0; j<screen_height; j++){
         for(int i=0; i<screen_width; i++){
-            if(z_buffer[i][j]<z_rear_limit)
-               fprintf(z_txt, ".6lf\t", z_buffer[i][j]);
+            //cout<<"i'm here"<<endl;
+            if(z_buffer[i][j]<z_rear_limit){
+               fprintf(z_txt, "%.6lf\t", z_buffer[i][j]);
+                //cout<<"sdfsfkjkjl"<<endl;
+            }
         }
         fprintf(z_txt, "\n");
     }
