@@ -296,7 +296,7 @@ void initialize_z_buffer_and_frame_buffer(){
         frame_buffer[i] = new Color[screen_height];
 
         for(int j=0; j<screen_height; j++)
-            z_buffer[i][j] = z_rear_limit+1;
+            z_buffer[i][j] = z_rear_limit;
     }
 
 }

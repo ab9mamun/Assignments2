@@ -242,12 +242,17 @@ public:
     }
 };
 
+bool compare_edges(Edge& e1, Edge& e2){
+    return e1.x_at_ymin < e2.x_at_ymin;
+}
+
 ///============================Global Variables========================
 int screen_height, screen_width;
 double x_left_limit, x_right_limit, y_top_limit, y_bottom_limit;
 double z_front_limit, z_rear_limit;
 double dx, dy;
 double bottom_y, left_x, right_x, top_y;
+double absolute_miny, absolute_maxy;
 
 vector<Edge>* edge_table;
 vector<Edge> active_edge_table;
@@ -449,6 +454,8 @@ void pre_process(){
 
     right_x = -left_x;
     top_y = -bottom_y;
+    absolute_miny = 99999.22;
+    absolute_maxy = -absolute_miny;
 }
 
 
@@ -465,6 +472,9 @@ void add_edge(double x1, double y1, double x2, double y2, int id){
 
     Edge e(y1, y2, del_x, id, x1);
     edge_table[row].push_back(e);
+
+    absolute_miny = min(absolute_miny, y1);
+    absolute_maxy = max(absolute_maxy, y2);
 }
 
 void add_edges(Triangle t){
@@ -514,15 +524,82 @@ void apply_procedure(){
     double leftest, rightest;
     int kase;
     double x, y, z;
+    double oldx, oldy;
 
-    kase = 0;
-    for (int i=0; i<screen_height; i++){
-        kase+= edge_table[i].size();
-        for(int j=0; j<edge_table[i].size(); j++){
-            cout<<"Edge: "; edge_table[i][j].print();
+    bottom_row = y_to_row(absolute_miny);
+    top_row = y_to_row(absolute_maxy);
+    //cout<<"BOTTOM: "<<bottom_row<<" TOP: "<<top_row<<endl;
+
+    ///==============SCANLINE STARTS===============================
+    for(int row = bottom_row; row<=top_row; row++){
+        //update active_edge_table---
+
+        ///at first update x for existing
+        for(int k =0; k<active_edge_table.size(); k++){
+            Edge e = active_edge_table[k];
+            active_edge_table[k].ymin = e.ymin + dy;
+            active_edge_table[k].x_at_ymin = e.x_at_ymin + dy*e.del_x;
         }
+        ///add new edges
+        for(int k = 0; k<edge_table[row].size(); k++){
+            Edge e = edge_table[row][k];
+            oldy = e.ymin;
+            e.ymin = bottom_y + row*dy;
+            e.x_at_ymin = e.x_at_ymin + (e.ymin - oldy)* e.del_x;
+            active_edge_table.push_back(e);
+        }
+        ///remove invalid edges
+        for(int k=0; k<active_edge_table.size(); k++){
+            Edge e = active_edge_table[k];
+            if (e.ymin > e.ymax){
+                active_edge_table.erase(active_edge_table.begin()+k);
+            }
+        }
+        sort(active_edge_table.begin(), active_edge_table.end(), compare_edges);
+        //end update aet
+
+        ///-for each edge but the last one
+        for(int k = 0; k <active_edge_table.size()-1; k++){
+            Edge e = active_edge_table[k];
+            active_polygon_table[e.tr_id] = !active_polygon_table[e.tr_id];
+
+            ///Now find the color
+            double z_min = z_rear_limit;
+            Color color(0,0,0);
+            x = e.x_at_ymin;
+            y = e.ymin;
+            for(int tr_id=0; tr_id<active_polygon_table.size(); tr_id++){
+                if(!active_polygon_table[tr_id]) continue;
+                //if(!Point)
+                Triangle t = triangles[tr_id];
+                if(!PointInTriangle(Point(x, y, 0), t.points[0], t.points[1], t.points[2])) continue;
+                z = t.find_z(x, y);
+                if(z < z_min){
+                    z_min = z;
+                    color = t.color;
+                }
+            }
+            ///color upto the next edge
+            Edge next = active_edge_table[k+1];
+            left_col = x_to_col(x);
+            right_col = x_to_col(next.x_at_ymin);
+
+            for(int col = left_col; col <= right_col; col++){
+                frame_buffer[col][screen_height-row-1] = color;
+            }
+
+        }
+
+
+        ///disable all active polygons
+        for(int k = 0; k<active_polygon_table.size(); k++){
+            active_polygon_table[k] = false;
+        }
+
+
     }
-    cout<<"TOTAL EDGES: "<<kase<<endl;
+
+    ///
 
 
 }//end_function
@@ -539,15 +616,14 @@ void save(){
 }
 
 void post_process(){
-    cout<<"Config"<<endl;
-    cout<<screen_width<<" "<<screen_height<<endl;
-    cout<<x_left_limit<<endl;
-    cout<<y_bottom_limit<<endl;
-    cout<<z_front_limit<<" "<<z_rear_limit<<endl;
-    cout<<"Stage3"<<endl;
-    for(int i=0; i<triangles.size(); i++){
-        triangles[i].print();
+    int kase = 0;
+    for (int i=0; i<screen_height; i++){
+        kase+= edge_table[i].size();
+        for(int j=0; j<edge_table[i].size(); j++){
+            cout<<"Edge: "; edge_table[i][j].print();
+        }
     }
+    cout<<"TOTAL EDGES: "<<kase<<endl;
 
 }
 
