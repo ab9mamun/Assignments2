@@ -461,8 +461,7 @@ void add_edge(double x1, double y1, double x2, double y2, int id){
     int row = y_to_row(y1);
     double del_x;
 
-    if(eq(x1, x2)) del_x = 0;
-    else del_x = (y2-y1)/(x2-x1);
+    del_x = (x2-x1)/(y2-y1);
 
     Edge e(y1, y2, del_x, id, x1);
     edge_table[row].push_back(e);
