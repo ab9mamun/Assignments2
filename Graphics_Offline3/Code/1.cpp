@@ -15,6 +15,16 @@ void ASSERT(bool cond, const char* str){
     }
 }
 
+template <typename T>
+T max(T a, T b, T c){
+    return max(max(a,b), c);
+}
+template <typename T>
+T min(T a, T b, T c){
+    return min(min(a,b), c);
+}
+
+
 class Vector{
 
 public:
@@ -197,7 +207,7 @@ int screen_height, screen_width;
 double x_left_limit, x_right_limit, y_top_limit, y_bottom_limit;
 double z_front_limit, z_rear_limit;
 double dx, dy;
-double bottom_y, left_x;
+double bottom_y, left_x, right_x, top_y;
 double** z_buffer;
 Color** frame_buffer;
 vector<Triangle> triangles;
@@ -241,6 +251,9 @@ void pre_process(){
     dy = y_top_limit*2/screen_width;
     bottom_y = y_bottom_limit + dy/2;
     left_x = x_left_limit + dx/2;
+
+    right_x = -left_x;
+    top_y = -bottom_y;
 }
 
 void initialize_z_buffer_and_frame_buffer(){
@@ -258,26 +271,112 @@ void initialize_z_buffer_and_frame_buffer(){
 
 }
 void pre_process2(){
-    for(int i=0; i<200; i++){
-        for(int j=0; j<100; j++){
-            frame_buffer[i][j].set(255,255,0);
-        }
+
+}
+
+///helper--
+int y_to_row(double y){
+    int r =  (int) ((y - y_bottom_limit) / dy + 0.5);
+    if (r<0){
+        return 0;
     }
+    else if (r>=screen_height){
+        return screen_height -1;
+    }
+    else return r;
+}
+
+int x_to_col(double x){
+    int c =  (int) ((x - x_left_limit) / dx + 0.5);
+    if (c<0){
+        return 0;
+    }
+    else if (c>=screen_width){
+        return screen_width -1;
+    }
+    else return c;
+}
+
+//sets right, returns left
+double get_intersection_y_to_x(Triangle t, double y, double& right){
+    double x1 = t.points[0].x;
+    double y1 = t.points[0].y;
+    double x2 = t.points[1].x;
+    double y2 = t.points[1].y;
+    double x3 = t.points[2].x;
+    double y3 = t.points[2].y;
+    double int1, int2;
+
+    ///if two points are on the line
+    if(y == y1 && y==y2){
+        right = max(x1,x2);
+        return min(x1, x2);
+    }
+    if(y==y2 && y==y3){
+        right = max(x2, x3);
+        return min(x2, x3);
+    }
+    if (y==y3 && y==y1){
+        right = max(x1, x3);
+        return min(x1, x3);
+    }
+
+    ///if two points are on the same side
+    if ((y2-y)*(y3-y) >= 0){
+        int1 = x2 + (x1-x2)/(y1-y2) * (y - y2);
+        int2 = x3 + (x1-x3)/(y1-y3) * (y-y3);
+    }
+    else if ((y3-y)*(y1-y) >= 0){
+        int1 = x3 + (x2-x3)/(y2-y3) * (y - y3);
+        int2 = x1 + (x2-x1)/(y2-y1) * (y-y1);
+    }
+    else if ((y1-y)*(y2-y) >= 0){
+        int1 = x1 + (x3-x1)/(y3-y1) * (y - y1);
+        int2 = x2 + (x3-x2)/(y3-y2) * (y - y2);
+
+    }
+    right = max(int1, int2);
+    return min(int1, int2);
 }
 
 void apply_procedure(){
     double bottom_scanline, top_scanline, left_scanline, right_scanline;
+    double bottom_row, top_row, left_col, right_col;
+    double lowest, highest, leftmost, rightmost;
+    double x, y, z;
 
     for(int k=0; k<triangles.size(); k++){
+        Triangle t = triangles[k];
+        lowest = min(t.points[0].y, t.points[1].y, t.points[2].y);
+        highest = max(t.points[0].y, t.points[1].y, t.points[2].y);
+        bottom_row = y_to_row(lowest);
+        top_row = y_to_row(highest);
 
-    }
-}
+        for(int row = bottom_row; row <= top_row; row++){
+            leftmost = get_intersection_y_to_x(t, y, rightmost);  //min(t.points[0].x, t.points[1].x, t.points[2].x);
+
+            left_col = x_to_col(leftmost);
+            right_col = x_to_col(rightmost);
+
+            y = bottom_y + row*dy;
+            for(int col = left_col; col<=right_col; col++){
+                x = left_x + col*dx;
+                ///check may be added-- if normal to the screen in (x,y) intersects the triangle
+                z = t.find_z(x, y);
+                if(z<z_buffer[col][row]){
+                    z_buffer[col][row] = z;
+                    frame_buffer[col][row] = t.color;
+                }
+            } //end col
+        }//end row
+    }//end triangle
+}//end_function
 
 void save(){
     bitmap_image image(screen_width,screen_height);
     for(int i=0;i<screen_width;i++){
         for(int j=0;j<screen_height;j++){
-            image.set_pixel(i,j,frame_buffer[i][j].r,frame_buffer[i][j].g,frame_buffer[i][j].b);
+            image.set_pixel(i,screen_width-j-1,frame_buffer[i][j].r,frame_buffer[i][j].g,frame_buffer[i][j].b);
         }
     }
     image.save_image("1.bmp");
