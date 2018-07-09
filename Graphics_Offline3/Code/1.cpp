@@ -462,9 +462,9 @@ void apply_procedure(){
                 if (!PointInTriangle(Point(x, y, 0), t.points[0], t.points[1], t.points[2])) continue;
 
                 z = t.find_z(x, y);
-                if(z<z_buffer[col][row]){
-                    z_buffer[col][row] = z;
-                    frame_buffer[col][row] = t.color;
+                if(z<z_buffer[col][screen_height-row -1]){
+                    z_buffer[col][screen_height-row-1] = z;
+                    frame_buffer[col][screen_height-row-1] = t.color;
                 }
             } //end col
         }//end row
@@ -475,7 +475,7 @@ void save(){
     bitmap_image image(screen_width,screen_height);
     for(int i=0;i<screen_width;i++){
         for(int j=0;j<screen_height;j++){
-            image.set_pixel(i,screen_width-j-1,frame_buffer[i][j].r,frame_buffer[i][j].g,frame_buffer[i][j].b);
+            image.set_pixel(i,j,frame_buffer[i][j].r,frame_buffer[i][j].g,frame_buffer[i][j].b);
         }
     }
     image.save_image("1.bmp");
