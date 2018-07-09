@@ -441,8 +441,8 @@ void apply_procedure(){
         Triangle t = triangles[k];
         lowest = min(t.points[0].y, t.points[1].y, t.points[2].y);
         highest = max(t.points[0].y, t.points[1].y, t.points[2].y);
-        bottom_row = y_to_row(lowest) +1;
-        top_row = y_to_row(highest)-1;
+        bottom_row = y_to_row(lowest);
+        top_row = y_to_row(highest);
 
         leftest = min(t.points[0].x, t.points[1].x, t.points[2].x);
         rightest = max(t.points[0].x, t.points[1].x, t.points[2].x);
