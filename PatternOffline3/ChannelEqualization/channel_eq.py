@@ -30,7 +30,6 @@ def process_bits(bits, n, W, noise_stddev):
 
 
 def main():
-    print('Hello world')
     np.random.seed(22)
 
     with open('config.txt') as file:
@@ -51,8 +50,8 @@ def main():
     noise_stddev = math.sqrt(noise_variance)
 
     I_seq, X_seq, N = process_bits(train_bits, n,W,  noise_stddev)
-    print('X_seq:')
-    print(X_seq, '\n')
+    #print('X_seq:')
+    #print(X_seq, '\n')
 
     X_clusters = [list() for i in range(M)]
     p_prior = np.zeros((M,))
@@ -71,19 +70,36 @@ def main():
     p_prior /= np.sum(p_prior)  #divide by sum of all
     p_trans /= np.sum(p_trans, axis=1).reshape((M,1))  #divide by row-wise sum
 
-    print('Prior probability:')
-    print(p_prior, '\n')
+    print('Prior probabilities:')
+    for j in range(M):
+        print('p(cluster_{}):\t{}'.format(j,'%.3f' % p_prior[j]))
 
-    print('Transition probablility:')
-    print(p_trans,'\n')
+    sep()
+    print('Transition probablilities:')
+
+    print('To Cluster ->\t\t', end='')
+    for j in range(M):
+        print('{}\t\t'.format(j), end='')
+    br()
+    for k in range(M):
+        print('From Cluster_{}:\t'.format(k), end='')
+        for j in range(M):
+            print('{}\t'.format('%.3f' %p_trans[k][j]), end='')
+        br()
+
+    br()
+
+
     #print(X_clusters)
 
     X_clusters_mean = [0]*M
     for i in range(M):
         X_clusters_mean[i] = np.average(X_clusters[i])
 
-    print('X_Cluster means:')
-    print(X_clusters_mean)
+    sep()
+    print('Cluster means:')
+    for j in range(M):
+        print('Cluster_{}:\t{}'.format(j, '%.3f' % X_clusters_mean[j]))
 
     ##-------------------now time for testing===================
 
