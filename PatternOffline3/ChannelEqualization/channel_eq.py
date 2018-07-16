@@ -12,6 +12,7 @@ def binToDec(arr):
 
 def main():
     print('Hello world')
+    np.random.seed(22)
 
     with open('config.txt') as file:
         n, _ = file.readline().split()
@@ -38,14 +39,44 @@ def main():
     W = np.array(weights).reshape((n,1))
     X_seq = np.dot(I_seq, W) + noises
 
-    print(X_seq)
+    X_seq = X_seq.reshape((N,))
+    print('X_seq:')
+    print(X_seq, '\n')
 
-    #X_clusters = [[] for i in range()]
-    ##X_clusters_mean = np.zeros()
-    #for i in range(N):
-     #   X_clusters[binToDec(I_seq[i])].append(X_seq[i][0])
+    X_clusters = [list() for i in range(M)]
+    p_prior = np.zeros((M,))
+    p_trans = np.zeros((M,M))
 
-    #for i in range(M):
+    k = binToDec(I_seq[0])
+    p_prior[k] +=1
+
+    for i in range(1, N):
+        k_1 = binToDec(I_seq[i-1])
+        k = binToDec(I_seq[i])
+        X_clusters[k].append(X_seq[i])
+        p_trans[k_1][k] +=1
+        p_prior[k] +=1
+
+    p_prior /= np.sum(p_prior)  #divide by sum of all
+    p_trans /= np.sum(p_trans, axis=1).reshape((M,1))  #divide by row-wise sum
+
+    print('Prior probability:')
+    print(p_prior, '\n')
+
+    print('Transition probablility:')
+    print(p_trans,'\n')
+    #print(X_clusters)
+
+    X_clusters_mean = [0]*M
+    for i in range(M):
+        X_clusters_mean[i] = np.average(X_clusters[i])
+
+    print('X_Cluster means:')
+    print(X_clusters_mean)
+
+    
+
+
 
 if __name__ == '__main__':
     main()

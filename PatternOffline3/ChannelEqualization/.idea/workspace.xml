@@ -23,8 +23,8 @@
       <file leaf-file-name="channel_eq.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/channel_eq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="47" column="5" selection-start-line="47" selection-start-column="5" selection-end-line="47" selection-end-column="5" />
+            <state relative-caret-position="259">
+              <caret line="76" column="4" selection-start-line="76" selection-start-column="4" selection-end-line="76" selection-end-column="4" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -49,8 +49,8 @@
       <file leaf-file-name="1305026.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../../_Others/CSE-474-Pattern-Recognition/1305026.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="44" column="12" selection-start-line="44" selection-start-column="12" selection-end-line="44" selection-end-column="50" />
+            <state relative-caret-position="269">
+              <caret line="126" column="77" selection-start-line="126" selection-start-column="64" selection-end-line="126" selection-end-column="77" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -72,6 +72,7 @@
       <find>random</find>
       <find>log</find>
       <find>normal</find>
+      <find>np.ave</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -247,15 +248,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../_Others/CSE-474-Pattern-Recognition/1305026.py">
+    <entry file="file://$PROJECT_DIR$/train.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="44" column="12" selection-start-line="44" selection-start-column="12" selection-end-line="44" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+        <state>
+          <caret selection-end-column="56" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -264,20 +265,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train.txt">
+    <entry file="file://$PROJECT_DIR$/../../../_Others/CSE-474-Pattern-Recognition/1305026.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-column="56" />
+        <state relative-caret-position="269">
+          <caret line="126" column="77" selection-start-line="126" selection-start-column="64" selection-end-line="126" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/channel_eq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="47" column="5" selection-start-line="47" selection-start-column="5" selection-end-line="47" selection-end-column="5" />
+        <state relative-caret-position="259">
+          <caret line="76" column="4" selection-start-line="76" selection-start-column="4" selection-end-line="76" selection-end-column="4" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
