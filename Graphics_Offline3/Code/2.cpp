@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 #include "bitmap_image.hpp"
 
@@ -293,7 +292,7 @@ bool PointInTriangle (Point pt, Point v1, Point v2, Point v3)
 
 ///helper--
 int y_to_row(double y){
-    int r =  (int) ((y - y_bottom_limit) / dy + 0.5);
+    int r =  (int) ((y - y_bottom_limit) / dy);
     if (r<0){
         return 0;
     }
@@ -304,7 +303,7 @@ int y_to_row(double y){
 }
 
 int x_to_col(double x){
-    int c =  (int) ((x - x_left_limit) / dx + 0.5);
+    int c =  (int) ((x - x_left_limit) / dx );
     if (c<0){
         return 0;
     }
@@ -605,13 +604,17 @@ void apply_procedure(){
                 if(winner >=0) frame_buffer[col][screen_height-row-1] = triangles[winner].color;
             }
 
+            //if(next.x_at_ymin > x_right_limit) break;
+
         }
 
 
         ///disable all active polygons
         for(int k = 0; k<active_polygon_table.size(); k++){
             active_polygon_table[k] = false;
-        }
+        }//
+
+
 
 
     }

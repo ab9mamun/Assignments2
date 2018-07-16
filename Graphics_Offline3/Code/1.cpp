@@ -306,7 +306,7 @@ void pre_process2(){
 
 ///helper--
 int y_to_row(double y){
-    int r =  (int) ((y - y_bottom_limit) / dy + 0.5);
+    int r =  (int) ((y - y_bottom_limit) / dy);
     if (r<0){
         return 0;
     }
@@ -317,7 +317,7 @@ int y_to_row(double y){
 }
 
 int x_to_col(double x){
-    int c =  (int) ((x - x_left_limit) / dx + 0.5);
+    int c =  (int) ((x - x_left_limit) / dx);
     if (c<0){
         return 0;
     }
@@ -462,7 +462,7 @@ void apply_procedure(){
                 if (!PointInTriangle(Point(x, y, 0), t.points[0], t.points[1], t.points[2])) continue;
 
                 z = t.find_z(x, y);
-                if(z<z_buffer[col][screen_height-row -1]){
+                if(z<z_buffer[col][screen_height-row -1] && z > z_front_limit){
                     z_buffer[col][screen_height-row-1] = z;
                     frame_buffer[col][screen_height-row-1] = t.color;
                 }
