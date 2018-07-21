@@ -36,7 +36,7 @@ void loadTestData() {
 	recursion_level = 2;
 
 	window_width = window_height = 500;
-	
+
 	Object* temp;
 	temp = (Object*) new Sphere(Point(0,0,10), 10.0);
 	temp->setColor(1, 0, 0);
@@ -47,13 +47,13 @@ void loadTestData() {
 
 	Point light1(-50, 50, 50);
 	lights.push_back(light1);
-	
+
 	temp = (Object*) new Floor(1000, 20);
 	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	temp->setShine(1);
 	objects.push_back(temp);
 
-	
+
 	temp = (Object*) new Sphere(Point(-20, -10, 10), 5.0);
 	temp->setColor(1, 0.7, 0);
 	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
@@ -81,17 +81,17 @@ void draw_everything() {
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->draw();
 	}
-	
+
 	for (int i = 0; i < lights.size(); i++) {
 		draw_light(lights[i]);
 	}
-	
+
 }
 
 void capture() {
 
 	cout << "Capturing..." << endl;
-	
+
 	//**Initialize bitmap_image of image_width * image_height to black
 	bitmap_image image(image_width, image_height);
 
@@ -117,10 +117,10 @@ void capture() {
 		for (int j = 0; j < image_height; j++) {
 			 corner = topleft + r * j*du - u * i*dv;
 			 Ray ray(pos, (corner - pos).normalize());
-			
+
 			 nearest = -1; //index of the nearest object--
 			 /** major bugfix*/ t_min = 99999;
-			 ////For each object k---------- 
+			 ////For each object k----------
 			 for (int k = 0; k < objects.size(); k++) {
 
 				 t = objects[k]->intersect(ray, colorAt, 0); /*dummy colorAt*/
@@ -162,7 +162,7 @@ void capture() {
 
 void drawAxes()
 {
-	
+
 	glBegin(GL_LINES); {
 		glColor3f(1.0, 0, 0.0);
 		glVertex3f(100, 0, 0);

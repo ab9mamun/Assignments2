@@ -1,0 +1,57 @@
+# depslib dependency file v1.0
+1523604880 source:f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\main.cpp
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<windows.h>
+	<glut.h>
+	"threed.hpp"
+
+1392007564 f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\opengl\include\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1523789336 f:\_git\assignments2\graphics_offline1\project2\opengl_codeblocks\threed.hpp
+	<cstdio>
+	<cmath>
+
+1532199671 source:f:\_git\assignments2\graphics_offline4\opengl_codeblocks\main.cpp
+	"common.hpp"
+	"threed.hpp"
+	"object.hpp"
+	"bitmap_image.hpp"
+
+1532195670 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\common.hpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<vector>
+	<windows.h>
+	<glut.h>
+	<algorithm>
+
+1526632244 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\opengl\include\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1532187978 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\threed.hpp
+	<cstdio>
+	<cmath>
+
+1532200150 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\object.hpp
+	"common.hpp"
+	"threed.hpp"
+
+1532199580 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\bitmap_image.hpp
+	<algorithm>
+	<cmath>
+	<cstdlib>
+	<fstream>
+	<iostream>
+	<iterator>
+	<limits>
+	<string>
+

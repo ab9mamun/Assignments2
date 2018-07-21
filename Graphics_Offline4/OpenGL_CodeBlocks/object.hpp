@@ -59,7 +59,7 @@ public:
 	int pixels_covered;
 	double source_factor = 1.0, refIdx = 1.5;
 	bool refraction_enabled = false;
-	
+
 	Object() { pixels_covered = 0; }
 	virtual void draw() {
 		ASSERT(false, "should not reach here");
@@ -114,8 +114,8 @@ public:
 	Sphere(Point center, double radius) {
 	reference_point = center;
 	length = radius;
-	} 
-	void draw(); 
+	}
+	void draw();
 
 	double getIntersectingT(Ray ray);
 
@@ -130,8 +130,8 @@ public:
 		reference_point = Point(-FloorWidth / 2, -FloorWidth / 2, 0);
 		length = TileWidth;
 	//	floor_width = FloorWidth;
-	} 
-	void draw(); 
+	}
+	void draw();
 
 	void getColorAt(double colorAt[3], Point intersectionPoint) {
 		int pos_x = (intersectionPoint.x - reference_point.x)/length;
@@ -182,8 +182,8 @@ void Sphere::draw() {
 		glColor3f(color[R], color[G], color[B]);
 		glTranslatef(reference_point.x, reference_point.y, reference_point.z);
 		glutSolidSphere(length, 50, 50);
-		glPopMatrix();
 	}
+	glPopMatrix();
 }
 void Floor::draw() {//write codes for drawing black and white floor
 	double startx, starty, endx, endy;
@@ -206,13 +206,13 @@ void Floor::draw() {//write codes for drawing black and white floor
 }
 
 void Triangle::draw() {
-	glPushMatrix();
-	glBegin(GL_TRIANGLES); { 
+    glColor3f(color[R], color[G], color[B]);
+	glBegin(GL_TRIANGLES); {
 		glVertex3f(p1.x, p1.y, p1.z);
 		glVertex3f(p2.x, p2.y, p2.z);
 		glVertex3f(p3.x, p3.y, p3.z);
 	}
-	glPopMatrix();
+	glEnd();
 }
 /******
 		INTERSECTING_T
@@ -318,7 +318,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 	bool obscured;
 
 	for (int i = 0; i<lights.size(); i++) {
-		
+
 
 		Vector dir = lights[i] - intersectionPoint;
 		double len = dir.length();
@@ -349,8 +349,8 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 		obscured = true;
 		if (!obscured) {
 
-			double lambert = max(0, Vector::dot(L.dir, normal));
-			double phong = max(0, pow(Vector::dot(reflection, ray.dir), shine));
+			double lambert = max(0.0, Vector::dot(L.dir, normal));
+			double phong = max(0.0, pow(Vector::dot(reflection, ray.dir), shine));
 
 
 			for (int c = 0; c<3; c++) {
@@ -371,11 +371,11 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 
 			nearest = -1; //index of the nearest object--
 			 t_min = 99999;
-			////For each object k---------- 
+			////For each object k----------
 			for (int k = 0; k < objects.size(); k++) {
 
 				t = objects[k]->intersect(reflectionRay, ref_color, 0); /*dummy colorAt*/
-													
+
 				if (t <= 0) continue;
 				//update t and nearest if t<t_min
 				if (t < t_min) {
@@ -391,7 +391,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 					current_color[c] += ref_color[c] * co_efficients[REFLECTION];
 				}
 				for (int c = 0; c < 3; c++) {
-					current_color[c] = max(0, min(1, current_color[c]));  //set between 0 to 1
+					current_color[c] = max(0.0, min(1.0, current_color[c]));  //set between 0 to 1
 				}
 			}
 
@@ -402,7 +402,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 			Ray refractionRay(start, refraction);
 			nearest = -1; //index of the nearest object--
 			t_min = 99999;
-			////For each object k---------- 
+			////For each object k----------
 			for (int k = 0; k < objects.size(); k++) {
 
 				t = objects[k]->intersect(refractionRay, ref_color, 0); /*dummy colorAt*/
@@ -422,7 +422,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 					current_color[c] += ref_color[c] * refIdx;
 				}
 				for (int c = 0; c < 3; c++) {
-					current_color[c] = max(0, min(1, current_color[c]));  //set between 0 to 1
+					current_color[c] = max(0.0, min(1.0, current_color[c]));  //set between 0 to 1
 				}
 			}
 		}
