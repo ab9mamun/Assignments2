@@ -77,6 +77,94 @@ void loadTestData() {
 
 }
 
+
+void loadActualData() {
+
+    pos.set(20, -70, 20);
+	l = (Point(0, 0, 0) - pos).normalize();
+	u.set(0, 0, 1);
+	r = (l*u).normalize();
+
+	window_width = window_height = 500;
+
+
+    ifstream scene("scene.txt");
+    scene>>recursion_level;
+    scene>>image_width;
+    image_height = image_width;
+
+    int num_obj;
+    Object* temp;
+    scene>>num_obj;
+    string obj_type;
+    double buffer[20];
+    double gen_coeffs[10];
+    int shine;
+    int num_refraction = 0;
+
+	for(int i=0; i<num_obj; i++){
+        scene>>obj_type;
+
+        if(obj_type == "sphere"){
+            for(int j=0; j<11; j++){
+                scene>>buffer[j];
+            }
+            scene>>shine;
+            temp = (Object*) new Sphere(Point(buffer[0], buffer[1], buffer[2]),buffer[3]);
+            temp->setColor(buffer[4], buffer[5], buffer[6]);
+            temp->setCoEfficients(buffer[7], buffer[8], buffer[9], buffer[10]);
+            temp->setShine(shine);
+            if(num_refraction == 0){
+                num_refraction++;
+                temp->refraction_enabled = true;
+            }
+            objects.push_back(temp);
+        }
+        else if(obj_type == "triangle"){
+            for(int j=0; j<16; j++){
+                scene>>buffer[j];
+            }
+            scene>>shine;
+            temp = (Object*) new Triangle(Point(buffer[0], buffer[1], buffer[2]),
+                                           Point(buffer[3], buffer[4], buffer[5]),
+                                          Point(buffer[6], buffer[7], buffer[8]));
+            temp->setColor(buffer[9], buffer[10], buffer[11]);
+            temp->setCoEfficients(buffer[12], buffer[13], buffer[14], buffer[15]);
+            temp->setShine(shine);
+            objects.push_back(temp);
+        }
+        else if(obj_type == "general"){
+             for(int j=0; j<10; j++){
+                scene>>gen_coeffs[j];
+            }
+            for(int j=0; j<13; j++){
+                scene>>buffer[j];
+            }
+
+            scene>>shine;
+            temp = (Object*) new GeneralQuadric(gen_coeffs, Point(buffer[0], buffer[1], buffer[2]), buffer[3], buffer[4], buffer[5]);
+            temp->setColor(buffer[6], buffer[7], buffer[8]);
+            temp->setCoEfficients(buffer[9], buffer[10], buffer[11], buffer[13]);
+            temp->setShine(shine);
+            ///objects.push_back(temp); ///ignored willingly--
+        }
+	}
+
+    int num_lights;
+    scene>>num_lights;
+    for(int i=0; i<num_lights; i++){
+        scene>>buffer[0]>>buffer[1]>>buffer[2];
+        lights.push_back(Point(buffer[0], buffer[1], buffer[2]));
+    }
+
+	temp = (Object*) new Floor(1000, 20);
+	temp->setCoEfficients(0.6, 0.3, 0.3, 0.3);
+	temp->setShine(4);
+	objects.push_back(temp);
+
+	scene.close();
+}
+
 void draw_everything() {
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->draw();
@@ -401,7 +489,8 @@ int main(int argc, char **argv){
 	//absolute_test();
 
 	///====================Ray tracing functions=========================
-	loadTestData();
+	//loadTestData();
+	loadActualData();
 	///--end ray tracing functions----
 
 	glutInit(&argc,argv);

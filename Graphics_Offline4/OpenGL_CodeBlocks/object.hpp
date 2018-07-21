@@ -184,7 +184,13 @@ public:
         this->height = height;
     }
 
+    void draw(){}
 
+	double getIntersectingT(Ray ray){}
+
+	Vector getNormal(Point intersectionPoint) {
+		return (intersectionPoint - reference_point).normalize();
+	}
 };
 
 
@@ -480,7 +486,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 				objects[nearest]->intersect(refractionRay, ref_color, level + 1);
 
 				for (int c = 0; c<3; c++) {
-					current_color[c] += ref_color[c] * 0.5;
+					current_color[c] += ref_color[c] * 0.4;
 				}
 				for (int c = 0; c < 3; c++) {
 					current_color[c] = max(0.0, min(1.0, current_color[c]));  //set between 0 to 1
