@@ -19,7 +19,7 @@
 #define REFLECTION 3
 #define VIEW_ANGLE 80
 #define pi (2*acos(0.0))
-#define DEBUG true
+#define DEBUG false
 
 
 using namespace std;

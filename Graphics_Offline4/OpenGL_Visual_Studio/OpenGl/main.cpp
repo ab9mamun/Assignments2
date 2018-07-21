@@ -90,7 +90,8 @@ void capture() {
 	double t;
 	double colorAt[3];
 	int nearest;
-	double t_min = 99999;
+	double t_min;
+	int pixels = 0;
 
 	for (int i = 0; i < image_width; i++) {
 		for (int j = 0; j < image_height; j++) {
@@ -99,6 +100,9 @@ void capture() {
 			 nearest = -1; //index of the nearest object--
 			 ////For each object k---------- 
 			 for (int k = 0; k < objects.size(); k++) {
+
+				 /** major bugfix*/ t_min = 99999;
+
 				 t = objects[k]->intersect(ray, colorAt, 0); /*dummy colorAt*/
 				/**dummyColorAt is the color array where pixel value
 				will be stored in return time.As this is only for nearest
@@ -114,15 +118,17 @@ void capture() {
 			 }
 			 if (nearest != -1) {
 				 t = objects[nearest]->intersect(ray, colorAt, 1);
-				 cout << "HERE "; debug_print(i, j);
-				 debug_print(colorAt[R], colorAt[G], colorAt[B]);
+				 //cout << "HERE "; debug_print(i, j);
+				// debug_print(colorAt[R], colorAt[G], colorAt[B]);
+				 pixels++;
 
-
-				 image.set_pixel(i, j, round(colorAt[R]*255), round(colorAt[G]*255), round(colorAt[B]*255));
+				 image.set_pixel(j, i, roundToInt(colorAt[R]*255), roundToInt(colorAt[G]*255), roundToInt(colorAt[B]*255));
 			 }
 		}
+
 	}
 
+	cout << "Total pixels colored: " << pixels << " "<<objects[0]->pixels_covered<<endl;
 
 	image.save_image("test.bmp");
 	

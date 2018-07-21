@@ -54,8 +54,9 @@ public:
 	int shine;
 	double color[3];
 	double co_efficients[4];
+	int pixels_covered;
 	
-	Object() { }
+	Object() { pixels_covered = 0; }
 	virtual void draw() {
 		ASSERT(false, "should not reach here");
 	}
@@ -121,7 +122,7 @@ public:
 		t1 = (-b + sqrt(d)) / (2.0*a);
 		t2 = (-b - sqrt(d)) / (2.0*a);
 
-		debug_print(t1, t2);
+		//debug_print(t1, t2);
 		Point T1, T2;
 		T1 = ray.start + t1 * ray.dir;
 		T2 = ray.start + t2 * ray.dir;
@@ -136,7 +137,9 @@ public:
 		double t =  intersection_t(ray);
 
 		//debug_print(color[R], t);
-		return t;
+		if (t <= 0) return -1;
+		pixels_covered++;
+		 return t;
 	}
 };
 
