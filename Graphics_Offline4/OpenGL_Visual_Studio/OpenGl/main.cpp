@@ -3,7 +3,7 @@
 #include "object.hpp"
 #include "bitmap_image.hpp"
 
-#define pi (2*acos(0.0))
+
 
 using namespace std;
 
@@ -64,6 +64,8 @@ void draw_everything() {
 }
 
 void capture() {
+	
+	//**Initialize bitmap_image of image_width * image_height to black
 	bitmap_image image(image_width, image_height);
 
 	for (int i = 0;i<image_width;i++) {
@@ -71,6 +73,49 @@ void capture() {
 			image.set_pixel(i, j, 0, 0, 0);
 		}
 	}
+
+	double plane_distance = (window_height / 2) / tan(rad(VIEW_ANGLE) / 2);
+	Point topleft = pos + l * plane_distance - r * window_width / 2 + u*window_height / 2;
+	double du, dv;
+	du = window_width * 1.0 / image_width;
+	dv = window_height * 1.0 / image_height;
+	Point corner;
+	double t;
+	double colorAt[3];
+	int nearest;
+	double t_min = 99999;
+
+	for (int i = 0; i < image_width; i++) {
+		for (int j = 0; j < image_height; j++) {
+			 corner = topleft + r * j*du - u * i*dv;
+			 Ray ray(pos, (corner - pos).normalize());
+			 nearest = -1; //index of the nearest object--
+			 ////For each object k---------- 
+			 for (int k = 0; k < objects.size(); k++) {
+				 t = objects[k]->intersect(ray, colorAt, 0); /*dummy colorAt*/
+				/**dummyColorAt is the color array where pixel value
+				will be stored in return time.As this is only for nearest
+				object detection dummy should be sufficient.Level is 0
+				here**/
+
+				 if (t <= 0) continue;
+				//update t and nearest if t<t_min
+				 if (t < t_min) {
+					 t_min = t;
+					 nearest = k;
+				 }
+			 }
+			 if (nearest != -1) {
+				 t = objects[nearest]->intersect(ray, colorAt, 1);
+				 image.set_pixel(i, j, colorAt[R], colorAt[G], colorAt[B]);
+			 }
+		}
+	}
+
+
+
+
+
 
 	image.save_image("test.bmp");
 	
@@ -293,7 +338,7 @@ void init(){
 	glLoadIdentity();
 
 	//give PERSPECTIVE parameters
-	gluPerspective(80,	1,	1,	1000.0);
+	gluPerspective(VIEW_ANGLE,	1,	1,	1000.0);
 	//field of view in the Y (vertically)
 	//aspect ratio that determines the field of view in the X direction (horizontally)
 	//near distance

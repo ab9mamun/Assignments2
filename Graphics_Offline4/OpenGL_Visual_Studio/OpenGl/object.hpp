@@ -5,6 +5,15 @@
 #include "threed.hpp"
 using namespace std;
 
+//external functions---------------
+void debug_print(double a);
+void debug_print(double a, double b);
+void debug_print(double a, double b, double  c);
+void debug_print(double a, double b, double  c, double d, double e, double f);
+template <typename T>
+void copy_arr(T* dest, T* src, int length);
+
+
 void drawTile(Point ref, double a, bool color)
 {
 	glColor3f(color, color, color);
@@ -25,6 +34,18 @@ void draw_light(Point reference_point) {
 		glPopMatrix();
 	}
 }
+
+class Ray {
+public:
+	Point start;
+	Vector dir;
+
+	Ray(Point start, Vector dir) {
+		this->start = start;
+		this->dir = dir;
+	}
+};
+
 
 class Object {
 public:
@@ -57,6 +78,9 @@ public:
 		cout << "Hi, I'm an object..\n";
 	}
 
+	virtual double intersect(Ray ray, double current_color[3], int level) {
+		return -1;
+	}
 };
 
 
@@ -74,6 +98,38 @@ public:
 			glutSolidSphere(length, 50, 50);
 			glPopMatrix();
 		}
+	}
+
+	double intersection_t(Ray ray) {
+
+		Vector Ro = (ray.start - reference_point).normalize();
+		Vector Rd = ray.dir.normalize();
+		double a, b, c, d, t1, t2;
+
+		a = Rd.dot(Rd);
+		b = 2 * Rd.dot(Ro);
+		c = Ro.dot(Ro) - length * length;
+		
+		debug_print(Ro.x, Ro.y, Ro.z, Rd.x, Rd.y, Rd.z);
+		debug_print(a, b, c);
+
+		d = b * b - 4 * a*c;
+		debug_print(d);
+
+		if (d < 0) return -1;
+
+		t1 = (-b + sqrt(d)) / (2.0*a);
+		t2 = (-b - sqrt(d)) / (2.0*a);
+
+		return min(t1, t2);
+	}
+
+	double intersect(Ray ray, double current_color[3], int level) {
+
+		copy_arr(current_color, color, 3);
+		double t =  intersection_t(ray);
+		debug_print(color[R], t);
+		return t;
 	}
 };
 
@@ -110,18 +166,6 @@ public:
 
 
 
-
-
-class Ray {
-public:
-	Point start;
-	Vector dir;
-	
-	Ray(Point start, Vector dir) {
-		this->start = start;
-		this->dir = dir;
-	}
-};
 
 
 #endif //OBJECT_HPP
