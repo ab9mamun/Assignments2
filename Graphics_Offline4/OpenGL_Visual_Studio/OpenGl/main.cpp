@@ -29,7 +29,7 @@ int slices;
 void draw_light(Point ref);
 
 void loadTestData() {
-	pos.set(20, -200, 20);
+	pos.set(20, -70, 20);
 	l = (Point(0, 0, 0) - pos).normalize();
 	u.set(0, 0, 1);
 	r = (l*u).normalize();
@@ -42,7 +42,9 @@ void loadTestData() {
 	temp->setColor(1, 0, 0);
 	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	temp->setShine(1);
+	temp->refraction_enabled = true;
 	objects.push_back(temp);;
+
 	Point light1(-50, 50, 50);
 	lights.push_back(light1);
 	
@@ -51,15 +53,18 @@ void loadTestData() {
 	temp->setShine(1);
 	objects.push_back(temp);
 
-	/*
-	temp = (Object*) new Sphere(Point(0, -10, 10), 5.0);
+	
+	temp = (Object*) new Sphere(Point(-20, -10, 10), 5.0);
 	temp->setColor(1, 0.7, 0);
+	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
+	temp->setShine(2);
 	objects.push_back(temp);
 
-	temp = (Object*) new Sphere(Point(0, 30, -7), 20);
+	temp = (Object*) new Sphere(Point(0, 30, 15), 20);
 	temp->setColor(0, 1, 1);
+	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
+	temp->setShine(3);
 	objects.push_back(temp);
-	*/
 
 
 	image_width = image_height = 768;

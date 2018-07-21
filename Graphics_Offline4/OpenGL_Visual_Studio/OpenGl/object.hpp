@@ -58,6 +58,7 @@ public:
 	double co_efficients[4];
 	int pixels_covered;
 	double source_factor = 1.0, refIdx = 1.5;
+	bool refraction_enabled = false;
 	
 	Object() { pixels_covered = 0; }
 	virtual void draw() {
@@ -205,7 +206,7 @@ double Sphere::getIntersectingT(Ray ray) {
 	T1 = ray.start + t1 * ray.dir;
 	T2 = ray.start + t2 * ray.dir;
 
-	debug_print(T1.x, T1.y, T1.z, T2.x, T2.y, T2.z);
+	//debug_print(T1.x, T1.y, T1.z, T2.x, T2.y, T2.z);
 	return min(t1, t2);
 }
 
@@ -273,10 +274,17 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 	bool obscured;
 
 	for (int i = 0; i<lights.size(); i++) {
+		
 
 		Vector dir = lights[i] - intersectionPoint;
 		double len = dir.length();
 		dir = dir.normalize();
+
+		if (pixels_covered % 100 == 0) {
+			debug_print(lights[i].x, lights[i].y, lights[i].z);
+			debug_print(intersectionPoint.x, intersectionPoint.y, intersectionPoint.z);
+			debug_print(dir.x, dir.y, dir.z);
+		}
 
 		Point start = intersectionPoint + dir * 1.0;
 		Ray L(start, dir);
@@ -288,7 +296,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 		for (int j = 0; j < objects.size(); j++) {
 			t = objects[j]->getIntersectingT(L);
 
-			if (t > 0 && t < len) {
+			if (t >= 0 && t <= len) {
 				obscured = true;
 				break;
 			}
@@ -301,90 +309,76 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 
 
 			for (int c = 0; c<3; c++) {
-				current_color[c] += source_factor * color[c]
-					* (lambert * co_efficients[DIFFUSE] + phong * co_efficients[SPECULAR]);
+				current_color[c] += source_factor * lambert * co_efficients[DIFFUSE]*color[c];
+				current_color[c] += source_factor * phong * co_efficients[SPECULAR]*color[c];
 			}
 		}
 
-
-		return;
-
-
-		////////////end-----
+		int nearest;
+		/**now time for reflection */
 
 		if (level < recursion_level) {
 
 			start = intersectionPoint + reflection * 1.0;
-
 			Ray reflectionRay(start, reflection);
+			double ref_color[3];
 
-			int nearest = -1;
-			double minT = 9999999;
-			double reflected_color[3];
-
+			nearest = -1; //index of the nearest object--
+			 t_min = 99999;
+			////For each object k---------- 
 			for (int k = 0; k < objects.size(); k++) {
 
-				double tk = objects[k]->getIntersectingT(reflectionRay);
-
-				if (tk <= 0) {
-					continue;
-				}
-				else if (tk < minT) {
-					minT = tk;
+				t = objects[k]->intersect(reflectionRay, ref_color, 0); /*dummy colorAt*/
+													
+				if (t <= 0) continue;
+				//update t and nearest if t<t_min
+				if (t < t_min) {
+					t_min = t;
 					nearest = k;
 				}
-
-				//cout<<tk<<endl;
 			}
-
 			if (nearest != -1) {
 
-				objects[nearest]->intersect(reflectionRay, reflected_color, level + 1);
+				objects[nearest]->intersect(reflectionRay, ref_color, level + 1);
 
-				for (int k = 0; k<3; k++) {
-					current_color[k] += reflected_color[k] * co_efficients[REFLECTION];
+				for (int c = 0; c<3; c++) {
+					current_color[c] += ref_color[c] * co_efficients[REFLECTION];
+				}
+				for (int c = 0; c < 3; c++) {
+					current_color[c] = max(0, min(1, current_color[c]));  //set between 0 to 1
 				}
 			}
+
+			return;
+
+			//end---
 
 			start = intersectionPoint + refraction * 1.0;
-
 			Ray refractionRay(start, refraction);
-
-			nearest = -1;
-			minT = 9999999;
-			double refracted_color[3];
-
+			nearest = -1; //index of the nearest object--
+			t_min = 99999;
+			////For each object k---------- 
 			for (int k = 0; k < objects.size(); k++) {
 
-				double tk = objects[k]->getIntersectingT(refractionRay);
+				t = objects[k]->intersect(refractionRay, ref_color, 0); /*dummy colorAt*/
 
-				if (tk <= 0) {
-					continue;
-				}
-				else if (tk < minT) {
-					minT = tk;
+				if (t <= 0) continue;
+				//update t and nearest if t<t_min
+				if (t < t_min) {
+					t_min = t;
 					nearest = k;
 				}
-
-				//cout<<tk<<endl;
 			}
-
 			if (nearest != -1) {
 
-				objects[nearest]->intersect(refractionRay, refracted_color, level + 1);
+				objects[nearest]->intersect(refractionRay, ref_color, level + 1);
 
-				for (int k = 0; k<3; k++) {
-					current_color[k] += refracted_color[k] * refIdx;
+				for (int c = 0; c<3; c++) {
+					current_color[c] += ref_color[c] * refIdx;
 				}
-			}
-		}
-
-		for (int k = 0; k<3; k++) {
-			if (current_color[k] > 1) {
-				current_color[k] = 1;
-			}
-			else if (current_color[k] < 0) {
-				current_color[k] = 0;
+				for (int c = 0; c < 3; c++) {
+					current_color[c] = max(0, min(1, current_color[c]));  //set between 0 to 1
+				}
 			}
 		}
 
