@@ -1,11 +1,6 @@
-#include<stdio.h>
-#include <iostream>
-#include<stdlib.h>
-#include<math.h>
-
-#include <windows.h>
-#include <glut.h>
+#include "common.hpp"
 #include "threed.hpp"
+#include "object.hpp"
 
 #define pi (2*acos(0.0))
 
@@ -21,9 +16,41 @@ double max_radius; ///max_radius of the sphere
 double radius; /// current radius of the sphere
 double radsens; ///radius sensitivity to home and end buttons.
 int window_width, window_height;
+vector<Object*> objects;
+vector<Point> lights;
 
 
 int slices;
+
+
+void loadTestData() {
+	pos.set(20, -200, 20);
+	l = (Point(0, 0, 0) - pos).normalize();
+	u.set(0, 0, 1);
+	r = (l*u).normalize();
+
+	window_width = window_height = 500;
+	
+	Object* temp;
+	temp->setColor(1, 0, 0);
+	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
+	temp->setShine(1);
+	objects.push_back(temp);;
+	Point light1(-50, 50, 50);
+	lights.push_back(light1);
+	
+	objects.push_back(temp);
+	//obj.print();
+}
+
+void draw_everything() {
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->draw();
+	}
+	
+}
+
+
 
 
 
@@ -189,6 +216,7 @@ void display(){
 	****************************/
 	//add objects
 	drawAxes();
+	draw_everything();
 
 
 
@@ -240,16 +268,6 @@ void init(){
 	//aspect ratio that determines the field of view in the X direction (horizontally)
 	//near distance
 	//far distance
-}
-
-
-void loadTestData() {
-	pos.set(20, -200, 20);
-	l = (Point(0, 0, 0) - pos).normalize();
-	u.set(0, 0, 1);
-	r = (l*u).normalize();
-
-	window_width = window_height =  500;
 }
 
 
