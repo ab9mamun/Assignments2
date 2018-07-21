@@ -23,13 +23,13 @@
 
 
 using namespace std;
+
 double rad(double deg) {
 	return deg * pi / 180;
 }
 double deg(double rad) {
 	return rad * 180 / pi;
 }
-
 void ASSERT(bool cond, const char* str) {
 	if (!cond) {
 		cout << str << endl;
@@ -66,7 +66,7 @@ void debug_print(double a, double b, double  c, double d, double e, double f) {
 }
 
 int roundToInt(double x) {
-	return (int) (x + 0.5);
+	return (int)(x + 0.5);
 }
 
 

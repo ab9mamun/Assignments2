@@ -66,6 +66,9 @@ public:
 	double dot(Vector v) {
 		return x * v.x + y * v.y + z * v.z;
 	}
+	static double  dot(Vector u, Vector v) {
+		return u.dot(v);
+	}
 
 	Vector operator*(Vector v) {
 		Vector w(y * v.z - z * v.y,

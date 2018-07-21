@@ -5,13 +5,15 @@
 #include "threed.hpp"
 using namespace std;
 
+//external variables
+
 //external functions---------------
-void debug_print(double a);
-void debug_print(double a, double b);
-void debug_print(double a, double b, double  c);
-void debug_print(double a, double b, double  c, double d, double e, double f);
+extern void debug_print(double a);
+extern void debug_print(double a, double b);
+extern void debug_print(double a, double b, double  c);
+extern void debug_print(double a, double b, double  c, double d, double e, double f);
 template <typename T>
-void copy_arr(T* dest, T* src, int length);
+extern void copy_arr(T* dest, T* src, int length);
 
 
 void drawTile(Point ref, double a, bool color)
@@ -55,6 +57,7 @@ public:
 	double color[3];
 	double co_efficients[4];
 	int pixels_covered;
+	double source_factor = 1.0, refIdx = 1.5;
 	
 	Object() { pixels_covered = 0; }
 	virtual void draw() {
@@ -79,103 +82,316 @@ public:
 		cout << "Hi, I'm an object..\n";
 	}
 
-	virtual double intersect(Ray ray, double current_color[3], int level) {
-		return -1;
+	virtual void getColorAt(double colorAt[3], Point intersectionPoint) {
+		copy_arr(colorAt, color, 3);
 	}
+
+	void setColorAt(double current_color[3], double colorAt[3]) {
+		for (int i = 0; i < 3; i++) {
+			current_color[i] = colorAt[i] * co_efficients[AMBIENT];
+		}
+		//cout << " I'm here" << endl;
+	}
+	virtual Vector getNormal(Point intersectionPoint) = 0;
+	Vector getReflection(Ray ray, Vector normal) {
+		Vector ref = 2 * ray.dir.dot(normal)*normal- ray.dir ;
+		return ref.normalize();
+	}
+
+
+	double intersect(Ray ray, double current_color[3], int level);
+
+	virtual double getIntersectingT(Ray ray) = 0;
+
+	Vector  getRefraction(Ray ray, Vector normal);
+
+	void illuminati(Ray ray, Point intersectionPoint, double current_color[3], int level);
 };
 
-
-class Sphere: Object{
+class Sphere: public Object{
 public:
 	Sphere(Point center, double radius) {
 	reference_point = center;
 	length = radius;
 	} 
-	void draw() {
-		//write codes for drawing sphere
-		glPushMatrix(); {
-			glColor3f(color[R], color[G], color[B]);
-			glTranslatef(reference_point.x, reference_point.y, reference_point.z);
-			glutSolidSphere(length, 50, 50);
-			glPopMatrix();
-		}
-	}
+	void draw(); 
 
-	double intersection_t(Ray ray) {
+	double getIntersectingT(Ray ray);
 
-		Vector Ro = (ray.start - reference_point);
-		Vector Rd = ray.dir.normalize();
-		double a, b, c, d, t1, t2;
-
-		a = Rd.dot(Rd);
-		b = 2 * Rd.dot(Ro);
-		c = Ro.dot(Ro) - length * length;
-		
-		//debug_print(Ro.x, Ro.y, Ro.z, Rd.x, Rd.y, Rd.z);
-		//debug_print(a, b, c);
-
-		d = b * b - 4 * a*c;
-		//debug_print(d);
-
-		if (d < 0) return -1;
-
-		t1 = (-b + sqrt(d)) / (2.0*a);
-		t2 = (-b - sqrt(d)) / (2.0*a);
-
-		//debug_print(t1, t2);
-		Point T1, T2;
-		T1 = ray.start + t1 * ray.dir;
-		T2 = ray.start + t2 * ray.dir;
-
-		debug_print(T1.x, T1.y, T1.z, T2.x, T2.y, T2.z);
-		return min(t1, t2);
-	}
-
-	double intersect(Ray ray, double current_color[3], int level) {
-
-		copy_arr(current_color, color, 3);
-		double t =  intersection_t(ray);
-
-		//debug_print(color[R], t);
-		if (t <= 0) return -1;
-		pixels_covered++;
-		 return t;
+	Vector getNormal(Point intersectionPoint) {
+		return (intersectionPoint - reference_point).normalize();
 	}
 };
 
-class Floor:Object {
+class Floor: public Object {
 public:
 	Floor(double FloorWidth, double TileWidth) {
 		reference_point = Point(-FloorWidth / 2, -FloorWidth / 2, 0);
 		length = TileWidth;
 	//	floor_width = FloorWidth;
 	} 
-	void draw() {//write codes for drawing black and white floor
-		double startx, starty, endx, endy;
-		bool rowColor;
-		startx = reference_point.x;
-		starty = reference_point.y;
-		endx = -startx;
-		endy = -starty;
-		rowColor = false;
-		bool cellColor;
-
-		for (double x = startx; x < endx; x += length) {
-			cellColor = rowColor;
-			for (double y = starty; y < endy; y += length) {
-				drawTile(Point(x, y, reference_point.z), length, cellColor);
-				cellColor = !cellColor;
-			}
-			rowColor = !rowColor;
-		}
-	}
+	void draw(); 
 
 	void getColorAt() {}
+
+	Vector getNormal(Point intersectionPoint) {
+		return Vector::Z();
+	}
+	double getIntersectingT(Ray ray);
 };
 
 
+//--function implementations=====
+
+/******
+DRAW
+*******/
+
+void Sphere::draw() {
+	//write codes for drawing sphere
+	glPushMatrix(); {
+		glColor3f(color[R], color[G], color[B]);
+		glTranslatef(reference_point.x, reference_point.y, reference_point.z);
+		glutSolidSphere(length, 50, 50);
+		glPopMatrix();
+	}
+}
+void Floor::draw() {//write codes for drawing black and white floor
+	double startx, starty, endx, endy;
+	bool rowColor;
+	startx = reference_point.x;
+	starty = reference_point.y;
+	endx = -startx;
+	endy = -starty;
+	rowColor = false;
+	bool cellColor;
+
+	for (double x = startx; x < endx; x += length) {
+		cellColor = rowColor;
+		for (double y = starty; y < endy; y += length) {
+			drawTile(Point(x, y, reference_point.z), length, cellColor);
+			cellColor = !cellColor;
+		}
+		rowColor = !rowColor;
+	}
+}
+
+/******
+		INTERSECTING_T
+*******/
+double Sphere::getIntersectingT(Ray ray) {
+
+	Vector Ro = (ray.start - reference_point);
+	Vector Rd = ray.dir.normalize();
+	double a, b, c, d, t1, t2;
+
+	a = Rd.dot(Rd);
+	b = 2 * Rd.dot(Ro);
+	c = Ro.dot(Ro) - length * length;
+
+	//debug_print(Ro.x, Ro.y, Ro.z, Rd.x, Rd.y, Rd.z);
+	//debug_print(a, b, c);
+
+	d = b * b - 4 * a*c;
+	//debug_print(d);
+
+	if (d < 0) return -1;
+
+	t1 = (-b + sqrt(d)) / (2.0*a);
+	t2 = (-b - sqrt(d)) / (2.0*a);
+
+	//debug_print(t1, t2);
+	Point T1, T2;
+	T1 = ray.start + t1 * ray.dir;
+	T2 = ray.start + t2 * ray.dir;
+
+	debug_print(T1.x, T1.y, T1.z, T2.x, T2.y, T2.z);
+	return min(t1, t2);
+}
+
+double Floor::getIntersectingT(Ray ray) {
+
+	return -1;
+}
 
 
+
+
+
+
+//************external variables--------------
+
+extern vector<Object*> objects;
+extern vector<Point> lights;
+extern int recursion_level;
+///================================
+
+double Object::intersect(Ray ray, double current_color[3], int level) {
+
+	copy_arr(current_color, color, 3);
+	double t = getIntersectingT(ray);
+
+	//debug_print(color[R], t);
+	if (t <= 0) return -1;
+	pixels_covered++;
+
+	if (level == 0) return t;
+	Point intersectionPoint = ray.start + ray.dir*t;
+	double colorAt[3];
+
+	getColorAt(colorAt, intersectionPoint);
+	setColorAt(current_color, colorAt);
+
+	illuminati(ray, intersectionPoint, current_color, level);
+
+	return t;
+
+
+}
+
+Vector Object::getRefraction(Ray ray, Vector normal) {
+	Vector refraction(0, 0, 0);
+
+	double dot = Vector::dot(normal, ray.dir);
+	double k = 1.0 - refIdx * refIdx * (1.0 - dot * dot);
+
+	if (k >= 0) {
+		refraction = ray.dir * refIdx - normal * (refIdx * dot + sqrt(k));
+		refraction = refraction.normalize();
+	}
+
+	return refraction;
+}
+
+
+void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3], int level) {
+
+	Vector normal = getNormal(intersectionPoint);
+	Vector reflection = getReflection(ray, normal);
+	Vector refraction = getRefraction(ray, normal);
+	double t, t_min;
+	bool obscured;
+
+	for (int i = 0; i<lights.size(); i++) {
+
+		Vector dir = lights[i] - intersectionPoint;
+		double len = dir.length();
+		dir = dir.normalize();
+
+		Point start = intersectionPoint + dir * 1.0;
+		Ray L(start, dir);
+		//cout<<intersectionPoint<<L.start<<L.dir;
+
+		obscured = false;
+
+		/*for each object check if the ray is obscured*/
+		for (int j = 0; j < objects.size(); j++) {
+			t = objects[j]->getIntersectingT(L);
+
+			if (t > 0 && t < len) {
+				obscured = true;
+				break;
+			}
+		}
+
+		if (!obscured) {
+
+			double lambert = max(0, Vector::dot(L.dir, normal));
+			double phong = max(0, pow(Vector::dot(reflection, ray.dir), shine));
+
+
+			for (int c = 0; c<3; c++) {
+				current_color[c] += source_factor * color[c]
+					* (lambert * co_efficients[DIFFUSE] + phong * co_efficients[SPECULAR]);
+			}
+		}
+
+
+		return;
+
+
+		////////////end-----
+
+		if (level < recursion_level) {
+
+			start = intersectionPoint + reflection * 1.0;
+
+			Ray reflectionRay(start, reflection);
+
+			int nearest = -1;
+			double minT = 9999999;
+			double reflected_color[3];
+
+			for (int k = 0; k < objects.size(); k++) {
+
+				double tk = objects[k]->getIntersectingT(reflectionRay);
+
+				if (tk <= 0) {
+					continue;
+				}
+				else if (tk < minT) {
+					minT = tk;
+					nearest = k;
+				}
+
+				//cout<<tk<<endl;
+			}
+
+			if (nearest != -1) {
+
+				objects[nearest]->intersect(reflectionRay, reflected_color, level + 1);
+
+				for (int k = 0; k<3; k++) {
+					current_color[k] += reflected_color[k] * co_efficients[REFLECTION];
+				}
+			}
+
+			start = intersectionPoint + refraction * 1.0;
+
+			Ray refractionRay(start, refraction);
+
+			nearest = -1;
+			minT = 9999999;
+			double refracted_color[3];
+
+			for (int k = 0; k < objects.size(); k++) {
+
+				double tk = objects[k]->getIntersectingT(refractionRay);
+
+				if (tk <= 0) {
+					continue;
+				}
+				else if (tk < minT) {
+					minT = tk;
+					nearest = k;
+				}
+
+				//cout<<tk<<endl;
+			}
+
+			if (nearest != -1) {
+
+				objects[nearest]->intersect(refractionRay, refracted_color, level + 1);
+
+				for (int k = 0; k<3; k++) {
+					current_color[k] += refracted_color[k] * refIdx;
+				}
+			}
+		}
+
+		for (int k = 0; k<3; k++) {
+			if (current_color[k] > 1) {
+				current_color[k] = 1;
+			}
+			else if (current_color[k] < 0) {
+				current_color[k] = 0;
+			}
+		}
+
+
+	}
+
+}
 
 
 #endif //OBJECT_HPP

@@ -6,13 +6,7 @@
 
 
 using namespace std;
-
-//external functions---------------
-void debug_print(double a);
-void debug_print(double a, double b);
-void debug_print(double a, double b, double  c);
-void debug_print(double a, double b, double  c, double d, double e, double f);
-int roundToInt(double x);
+extern double rad(double);
 
 ///global variables
 Point pos;
@@ -25,6 +19,7 @@ double radius; /// current radius of the sphere
 double radsens; ///radius sensitivity to home and end buttons.
 int window_width, window_height;
 int image_width, image_height;
+int recursion_level;
 vector<Object*> objects;
 vector<Point> lights;
 
@@ -38,6 +33,7 @@ void loadTestData() {
 	l = (Point(0, 0, 0) - pos).normalize();
 	u.set(0, 0, 1);
 	r = (l*u).normalize();
+	recursion_level = 2;
 
 	window_width = window_height = 500;
 	
@@ -55,7 +51,7 @@ void loadTestData() {
 	temp->setShine(1);
 	objects.push_back(temp);
 
-
+	/*
 	temp = (Object*) new Sphere(Point(0, -10, 10), 5.0);
 	temp->setColor(1, 0.7, 0);
 	objects.push_back(temp);
@@ -63,6 +59,7 @@ void loadTestData() {
 	temp = (Object*) new Sphere(Point(0, 30, -7), 20);
 	temp->setColor(0, 1, 1);
 	objects.push_back(temp);
+	*/
 
 
 	image_width = image_height = 768;
@@ -81,6 +78,8 @@ void draw_everything() {
 }
 
 void capture() {
+
+	cout << "Capturing..." << endl;
 	
 	//**Initialize bitmap_image of image_width * image_height to black
 	bitmap_image image(image_width, image_height);
@@ -141,7 +140,7 @@ void capture() {
 	//cout << "Total pixels colored: " << pixels << " "<<objects[0]->pixels_covered<<endl;
 
 	image.save_image("test.bmp");
-	
+	cout << "Captured" << endl;
 }
 
 
