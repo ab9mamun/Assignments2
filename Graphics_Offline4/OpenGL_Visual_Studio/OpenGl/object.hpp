@@ -107,4 +107,21 @@ public:
 	void getColorAt() {}
 };
 
+
+
+
+
+
+class Ray {
+public:
+	Point start;
+	Vector dir;
+	
+	Ray(Point start, Vector dir) {
+		this->start = start;
+		this->dir = dir;
+	}
+};
+
+
 #endif //OBJECT_HPP

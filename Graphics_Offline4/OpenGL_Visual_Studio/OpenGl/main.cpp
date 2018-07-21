@@ -1,6 +1,7 @@
 #include "common.hpp"
 #include "threed.hpp"
 #include "object.hpp"
+#include "bitmap_image.hpp"
 
 #define pi (2*acos(0.0))
 
@@ -16,6 +17,7 @@ double max_radius; ///max_radius of the sphere
 double radius; /// current radius of the sphere
 double radsens; ///radius sensitivity to home and end buttons.
 int window_width, window_height;
+int image_width, image_height;
 vector<Object*> objects;
 vector<Point> lights;
 
@@ -46,6 +48,8 @@ void loadTestData() {
 	temp->setShine(1);
 	objects.push_back(temp);
 
+	image_width = image_height = 768;
+
 }
 
 void draw_everything() {
@@ -56,6 +60,19 @@ void draw_everything() {
 	for (int i = 0; i < lights.size(); i++) {
 		draw_light(lights[i]);
 	}
+	
+}
+
+void capture() {
+	bitmap_image image(image_width, image_height);
+
+	for (int i = 0;i<image_width;i++) {
+		for (int j = 0;j<image_height;j++) {
+			image.set_pixel(i, j, 0, 0, 0);
+		}
+	}
+
+	image.save_image("test.bmp");
 	
 }
 
@@ -86,6 +103,10 @@ void drawAxes()
 
 void keyboardListener(unsigned char key, int x,int y){
 	switch(key){
+
+		case '0':
+			capture();
+			break;
 
 		case '1':   ///rotate left;  r and l about u
 			r = r.rotatePA(rotsens, u);
