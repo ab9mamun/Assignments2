@@ -102,7 +102,7 @@ public:
 
 	double intersection_t(Ray ray) {
 
-		Vector Ro = (ray.start - reference_point).normalize();
+		Vector Ro = (ray.start - reference_point);
 		Vector Rd = ray.dir.normalize();
 		double a, b, c, d, t1, t2;
 
@@ -110,17 +110,23 @@ public:
 		b = 2 * Rd.dot(Ro);
 		c = Ro.dot(Ro) - length * length;
 		
-		debug_print(Ro.x, Ro.y, Ro.z, Rd.x, Rd.y, Rd.z);
-		debug_print(a, b, c);
+		//debug_print(Ro.x, Ro.y, Ro.z, Rd.x, Rd.y, Rd.z);
+		//debug_print(a, b, c);
 
 		d = b * b - 4 * a*c;
-		debug_print(d);
+		//debug_print(d);
 
 		if (d < 0) return -1;
 
 		t1 = (-b + sqrt(d)) / (2.0*a);
 		t2 = (-b - sqrt(d)) / (2.0*a);
 
+		debug_print(t1, t2);
+		Point T1, T2;
+		T1 = ray.start + t1 * ray.dir;
+		T2 = ray.start + t2 * ray.dir;
+
+		debug_print(T1.x, T1.y, T1.z, T2.x, T2.y, T2.z);
 		return min(t1, t2);
 	}
 
@@ -128,7 +134,8 @@ public:
 
 		copy_arr(current_color, color, 3);
 		double t =  intersection_t(ray);
-		debug_print(color[R], t);
+
+		//debug_print(color[R], t);
 		return t;
 	}
 };

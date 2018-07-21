@@ -19,7 +19,7 @@
 #define REFLECTION 3
 #define VIEW_ANGLE 80
 #define pi (2*acos(0.0))
-#define DEBUG false
+#define DEBUG true
 
 
 using namespace std;
@@ -64,5 +64,10 @@ void debug_print(double a, double b, double  c, double d, double e, double f) {
 	if (DEBUG)
 		cout << a << " " << b << " " << c << " " << d << " " << e << " " << f << endl;
 }
+
+int roundToInt(double x) {
+	return (int) (x + 0.5);
+}
+
 
 #endif //COMMON_HPP

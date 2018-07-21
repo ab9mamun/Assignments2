@@ -7,6 +7,13 @@
 
 using namespace std;
 
+//external functions---------------
+void debug_print(double a);
+void debug_print(double a, double b);
+void debug_print(double a, double b, double  c);
+void debug_print(double a, double b, double  c, double d, double e, double f);
+int roundToInt(double x);
+
 ///global variables
 Point pos;
 Vector u, r, l;
@@ -107,14 +114,14 @@ void capture() {
 			 }
 			 if (nearest != -1) {
 				 t = objects[nearest]->intersect(ray, colorAt, 1);
-				 image.set_pixel(i, j, colorAt[R], colorAt[G], colorAt[B]);
+				 cout << "HERE "; debug_print(i, j);
+				 debug_print(colorAt[R], colorAt[G], colorAt[B]);
+
+
+				 image.set_pixel(i, j, round(colorAt[R]*255), round(colorAt[G]*255), round(colorAt[B]*255));
 			 }
 		}
 	}
-
-
-
-
 
 
 	image.save_image("test.bmp");
@@ -346,7 +353,20 @@ void init(){
 }
 
 
+
+void absolute_test() {
+	Sphere* sp = new Sphere(Point(0, 0, 10), 10);
+	Ray ray(Point(5, -100, 5), Vector(0, 1, 0));
+	double colorAt[3];
+
+	double t = sp->intersect(ray, colorAt, 0);
+	getchar();
+	exit(0);
+}
+
 int main(int argc, char **argv){
+
+	//absolute_test();
 
 	///====================Ray tracing functions=========================
 	loadTestData();
