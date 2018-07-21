@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include <iostream>
 #include<stdlib.h>
 #include<math.h>
 
@@ -7,6 +8,8 @@
 #include "threed.hpp"
 
 #define pi (2*acos(0.0))
+
+using namespace std;
 
 ///global variables
 Point pos;
@@ -17,22 +20,28 @@ double rotsens; //rotate sensitivity;
 double max_radius; ///max_radius of the sphere
 double radius; /// current radius of the sphere
 double radsens; ///radius sensitivity to home and end buttons.
+int window_width, window_height;
+
 
 int slices;
 
 
 
 
+
 void drawAxes()
 {
-	glColor3f(0, 0, 1.0);
+	
 	glBegin(GL_LINES); {
+		glColor3f(1.0, 0, 0.0);
 		glVertex3f(100, 0, 0);
 		glVertex3f(-100, 0, 0);
 
+		glColor3f(0, 1.0, 0);
 		glVertex3f(0, -100, 0);
 		glVertex3f(0, 100, 0);
 
+		glColor3f(0, 0, 1.0);
 		glVertex3f(0, 0, 100);
 		glVertex3f(0, 0, -100);
 	}glEnd();
@@ -162,6 +171,10 @@ void display(){
 	//2. where is the camera looking?
 	//3. Which direction is the camera's UP direction?
 
+
+	//cout << pos.x << " " << pos.y << " " << pos.z << " " << " " << pos.x + l.x << " " << pos.y + l.y << " " << pos.z + l.z << " "
+	//	<<u.x<<" "<<u.y<<" "<<u.z<<endl;
+
 	gluLookAt(pos.x, pos.y, pos.z,
 		pos.x + l.x, pos.y + l.y, pos.z + l.z,
 		u.x, u.y, u.z);
@@ -177,7 +190,7 @@ void display(){
 	//add objects
 	drawAxes();
 
-	//drawStoC(); ///sphere to cube
+
 
 
 
@@ -195,10 +208,10 @@ void animate(){
 void init(){
 	//codes for initialization
 	double root2 = sqrt(2);
-	u.set(0, 0, 1);
-	r.set(-1 / root2, 1 / root2, 0);
-	l.set(-1 / root2, -1 / root2, 0);
-	pos.set(100, 100, 0);
+	//u.set(0, 0, 1);
+	//r.set(-1 / root2, 1 / root2, 0);
+	//l.set(-1 / root2, -1 / root2, 0);
+	//pos.set(100, 100, 30);
 
 	movsens = 2;
 	rotsens = 3;
@@ -229,9 +242,25 @@ void init(){
 	//far distance
 }
 
+
+void loadTestData() {
+	pos.set(20, -200, 20);
+	l = (Point(0, 0, 0) - pos).normalize();
+	u.set(0, 0, 1);
+	r = (l*u).normalize();
+
+	window_width = window_height =  500;
+}
+
+
 int main(int argc, char **argv){
+
+	///====================Ray tracing functions=========================
+	loadTestData();
+	///--end ray tracing functions----
+
 	glutInit(&argc,argv);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(window_width, window_height);
 	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);	//Depth, Double buffer, RGB color
 

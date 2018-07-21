@@ -58,7 +58,7 @@ public:
 	Vector operator/(double c) {
 		return (*this)*(1.0 / c);
 	}
-	Vector unit() {
+	Vector normalize() {
 		double len = length();
 		return (*this) / len;
 	}
@@ -76,7 +76,7 @@ public:
 
 	/// n is a perpendicular vector to the surface
 	Vector reflect(Vector n) {
-		n = n.unit();
+		n = n.normalize();
 		Vector a = *this;
 		return a - n * 2 * a.dot(n);
 	}
@@ -84,7 +84,7 @@ public:
 	///rotate respect to a perpendicular axis
 	Vector rotatePA(double angle_deg, Vector axis = Z()) {
 		double A = angle_deg * pi / 180.0;
-		Vector r = axis.unit();
+		Vector r = axis.normalize();
 		Vector l = (*this);
 		Vector u = r * l;
 		u = l * cos(A) + u * sin(A);
