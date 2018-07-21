@@ -87,12 +87,6 @@ public:
 		copy_arr(colorAt, color, 3);
 	}
 
-	void setColorAt(double current_color[3], double colorAt[3]) {
-		for (int i = 0; i < 3; i++) {
-			current_color[i] = colorAt[i] * co_efficients[AMBIENT];
-		}
-		//cout << " I'm here" << endl;
-	}
 	virtual Vector getNormal(Point intersectionPoint) = 0;
 	Vector getReflection(Ray ray, Vector normal) {
 		Vector ref = ray.dir - 2 * ray.dir.dot(normal)*normal ;
@@ -340,10 +334,6 @@ double Object::intersect(Ray ray, double current_color[3], int level) {
 
 	if (level == 0) return t;
 	Point intersectionPoint = ray.start + ray.dir*t;
-	double colorAt[3];
-
-	getColorAt(colorAt, intersectionPoint);
-	setColorAt(current_color, colorAt);
 
 	illuminati(ray, intersectionPoint, current_color, level);
 
@@ -375,8 +365,13 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 	double t, t_min;
 	bool obscured;
 
-	for (int i = 0; i<lights.size(); i++) {
+	double colorAt[3];
 
+	getColorAt(colorAt, intersectionPoint);
+	for(int c=0; c<3; c++)
+        current_color[c] = colorAt[c]*co_efficients[AMBIENT];
+
+	for (int i = 0; i<lights.size(); i++) {
 
 		Vector dir = lights[i] - intersectionPoint;
 		double len = dir.length();
@@ -393,27 +388,35 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 		//cout<<intersectionPoint<<L.start<<L.dir;
 
 		obscured = false;
-
+        double dummyColorAt[3];
 		/*for each object check if the ray is obscured*/
 		for (int j = 0; j < objects.size(); j++) {
-			t = objects[j]->getIntersectingT(L);
+			t = objects[j]->intersect(L, dummyColorAt, 0);
 
-			if (t >= 0 && t <= len) {
+			if (t >= 0 && t<= len) {
 				obscured = true;
 				break;
 			}
 		}
 
-		//obscured = true;
+		//obscured = false;
 		if (!obscured) {
 
-			double lambert = max(0.0, Vector::dot(L.dir, normal));
-			double phong = max(0.0, pow(Vector::dot(reflection, ray.dir), shine));
+			double lambert = Vector::dot(L.dir, normal);
+			double phong =  -Vector::dot(reflection, -L.dir);
 
+			lambert = max(0.0, lambert);
+			phong = max(0.0, phong);
+			phong = pow(phong, shine);
 
 			for (int c = 0; c<3; c++) {
-				current_color[c] += source_factor * lambert * co_efficients[DIFFUSE]*color[c];
-				current_color[c] += source_factor * phong * co_efficients[SPECULAR]*color[c];
+                debug_print(source_factor, lambert, phong, co_efficients[DIFFUSE], co_efficients[SPECULAR], color[c]);
+				current_color[c] += source_factor * lambert * co_efficients[DIFFUSE]*colorAt[c];  ///major bugfix
+				current_color[c] += source_factor * phong * co_efficients[SPECULAR]*colorAt[c];  ///major bugfix
+			}
+
+			for(int c=0; c<3; c++){
+                current_color[c] = max(0.0, min(1.0, current_color[c]));
 			}
 		}
 
@@ -477,7 +480,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 				objects[nearest]->intersect(refractionRay, ref_color, level + 1);
 
 				for (int c = 0; c<3; c++) {
-					current_color[c] += ref_color[c] * 0.4;
+					current_color[c] += ref_color[c] * 0.5;
 				}
 				for (int c = 0; c < 3; c++) {
 					current_color[c] = max(0.0, min(1.0, current_color[c]));  //set between 0 to 1

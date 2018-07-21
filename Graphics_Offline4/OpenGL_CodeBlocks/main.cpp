@@ -49,8 +49,8 @@ void loadTestData() {
 	lights.push_back(light1);
 
 	temp = (Object*) new Floor(1000, 20);
-	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
-	temp->setShine(1);
+	temp->setCoEfficients(0.6, 0.2, 0.2, 0.3);
+	temp->setShine(3);
 	objects.push_back(temp);
 
 
@@ -115,7 +115,7 @@ void capture() {
 
 	for (int i = 0; i < image_width; i++) {
 		for (int j = 0; j < image_height; j++) {
-			 corner = topleft + r * j*du - u * i*dv;
+			 corner = topleft + r * (j*du+du/2) + - u * (i*dv + dv/2);
 			 Ray ray(pos, (corner - pos).normalize());
 
 			 nearest = -1; //index of the nearest object--
@@ -187,30 +187,36 @@ void keyboardListener(unsigned char key, int x,int y){
 			break;
 
 		case '1':   ///rotate left;  r and l about u
-			r = r.rotatePA(rotsens, u);
-			l = l.rotatePA(rotsens, u);
+		    u = u.normalize();
+			r = r.rotatePA(rotsens, u).normalize();
+			l = l.rotatePA(rotsens, u).normalize();
 			//printf("%lf %lf %lf %lf %lf %lf\n", r.x, r.y, r.z, l.x, l.y, l.z);
 			break;
 		case '2':   ///rotate right; r and l about u
-			r = r.rotatePA(rotsens, -u);
-			l = l.rotatePA(rotsens, -u);
+		    u = u.normalize();
+			r = r.rotatePA(rotsens, -u).normalize();
+			l = l.rotatePA(rotsens, -u).normalize();
 			//printf("%lf %lf %lf %lf %lf %lf\n", r.x, r.y, r.z, l.x, l.y, l.z);
 			break;
 		case '3':   ///rotate up; l and u about r
-			u = u.rotatePA(rotsens, r);
-			l = l.rotatePA(rotsens, r);
+		    r = r.normalize();
+			u = u.rotatePA(rotsens, r).normalize();
+			l = l.rotatePA(rotsens, r).normalize();
 			break;
 		case '4':   ///rotate down; l and u about r
-			u = u.rotatePA(rotsens, -r);
-			l = l.rotatePA(rotsens, -r);
+		    r = r.normalize();
+			u = u.rotatePA(rotsens, -r).normalize();
+			l = l.rotatePA(rotsens, -r).normalize();
 			break;
 		case '5':   ///tilt clockwise; r and u about l
-			r = r.rotatePA(rotsens, l);
-			u = u.rotatePA(rotsens, l);
+		    l = l.normalize();
+			r = r.rotatePA(rotsens, l).normalize();
+			u = u.rotatePA(rotsens, l).normalize();
 			break;
 		case '6':   ///tilt counterclockwise; r and u about l
-			r = r.rotatePA(rotsens, -l);
-			u = u.rotatePA(rotsens, -l);
+		    l = l.normalize();
+			r = r.rotatePA(rotsens, -l).normalize();
+			u = u.rotatePA(rotsens, -l).normalize();
 			break;
 
 		default:
