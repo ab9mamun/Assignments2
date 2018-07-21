@@ -169,6 +169,14 @@ public:
 
 };
 
+class GeneralQuadric: public Object {
+public:
+    double a, b, c, d, e, f, g, h, i, j;
+    GeneralQuadric(double coeff[10], double len){
+    }
+
+};
+
 
 //--function implementations=====
 
@@ -253,15 +261,49 @@ double Floor::getIntersectingT(Ray ray) {
 
 	//https://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/raycast/sld017.htm
 	double t = - Vector::dot(ray.start.asVector() ,normal) / Vector::dot( ray.dir, normal);
-	return t > 0 ? t : -1;
+	if(t <0) return -1;
+	Point intersectPoint = ray.start + ray.dir*t;
+	if( intersectPoint.x > abs(reference_point.x) || intersectPoint.y > abs(reference_point.y)) return -1;
+
+	return t;
+
 }
 
+
+///https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 double Triangle::getIntersectingT(Ray ray) {
-	return -1;
+    const float EPSILON = 0.0000001;
+    Point vertex0 = p1;
+    Point vertex1 = p2;
+    Point vertex2 = p3;
+    Vector edge1, edge2, h, s, q;
+    float a,f,u,v;
+
+    edge1 = vertex1 - vertex0;
+    edge2 = vertex2 - vertex0;
+    h = ray.dir*edge2;
+    a = edge1.dot(h);
+
+    if (a > -EPSILON && a < EPSILON)
+        return -1;
+
+    f = 1/a;
+    s = ray.start - vertex0;
+    u = f * (s.dot(h));
+    if (u < 0.0 || u > 1.0)
+        return -1;
+
+    q = s*(edge1);
+    v = f * ray.dir.dot(q);
+    if (v < 0.0 || u + v > 1.0)
+        return -1;
+    // At this stage we can compute t to find out where the intersection point is on the line.
+    float t = f * edge2.dot(q);
+    if (t > EPSILON) // ray intersection
+        return t;
+    else // This means that there is a line intersection but not a ray intersection.
+        return -1;
 }
-
-
-
 
 
 //************external variables--------------

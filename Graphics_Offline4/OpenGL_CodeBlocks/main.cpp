@@ -33,7 +33,7 @@ void loadTestData() {
 	l = (Point(0, 0, 0) - pos).normalize();
 	u.set(0, 0, 1);
 	r = (l*u).normalize();
-	recursion_level = 2;
+	recursion_level = 4;
 
 	window_width = window_height = 500;
 
