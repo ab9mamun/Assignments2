@@ -133,7 +133,17 @@ public:
 	} 
 	void draw(); 
 
-	void getColorAt() {}
+	void getColorAt(double colorAt[3], Point intersectionPoint) {
+		int pos_x = (intersectionPoint.x - reference_point.x)/length;
+		int pos_y = (intersectionPoint.y - reference_point.y) / length;
+		if ((pos_x + pos_y) % 2 ==0) {
+			for(int c=0; c<3; c++) colorAt[c] = 0;
+
+		}
+		else {
+			for (int c = 0; c<3; c++) colorAt[c] = 1;
+		}
+	}
 
 	Vector getNormal(Point intersectionPoint) {
 		return Vector::Z();
@@ -212,7 +222,11 @@ double Sphere::getIntersectingT(Ray ray) {
 
 double Floor::getIntersectingT(Ray ray) {
 
-	return -1;
+	Vector normal = getNormal(reference_point);
+
+	//https://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/raycast/sld017.htm
+	double t = - Vector::dot(ray.start.asVector() ,normal) / Vector::dot( ray.dir, normal);
+	return t > 0 ? t : -1;
 }
 
 
@@ -302,6 +316,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 			}
 		}
 
+		obscured = true;
 		if (!obscured) {
 
 			double lambert = max(0, Vector::dot(L.dir, normal));
@@ -313,6 +328,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 				current_color[c] += source_factor * phong * co_efficients[SPECULAR]*color[c];
 			}
 		}
+
 
 		int nearest;
 		/**now time for reflection */
@@ -349,9 +365,8 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 				}
 			}
 
-			return;
-
 			//end---
+			if (!refraction_enabled) return;
 
 			start = intersectionPoint + refraction * 1.0;
 			Ray refractionRay(start, refraction);
