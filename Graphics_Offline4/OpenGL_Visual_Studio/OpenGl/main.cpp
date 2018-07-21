@@ -55,6 +55,16 @@ void loadTestData() {
 	temp->setShine(1);
 	objects.push_back(temp);
 
+
+	temp = (Object*) new Sphere(Point(0, -10, 10), 5.0);
+	temp->setColor(1, 0.7, 0);
+	objects.push_back(temp);
+
+	temp = (Object*) new Sphere(Point(0, 30, -7), 20);
+	temp->setColor(0, 1, 1);
+	objects.push_back(temp);
+
+
 	image_width = image_height = 768;
 
 }
@@ -97,11 +107,11 @@ void capture() {
 		for (int j = 0; j < image_height; j++) {
 			 corner = topleft + r * j*du - u * i*dv;
 			 Ray ray(pos, (corner - pos).normalize());
+			
 			 nearest = -1; //index of the nearest object--
+			 /** major bugfix*/ t_min = 99999;
 			 ////For each object k---------- 
 			 for (int k = 0; k < objects.size(); k++) {
-
-				 /** major bugfix*/ t_min = 99999;
 
 				 t = objects[k]->intersect(ray, colorAt, 0); /*dummy colorAt*/
 				/**dummyColorAt is the color array where pixel value
@@ -128,7 +138,7 @@ void capture() {
 
 	}
 
-	cout << "Total pixels colored: " << pixels << " "<<objects[0]->pixels_covered<<endl;
+	//cout << "Total pixels colored: " << pixels << " "<<objects[0]->pixels_covered<<endl;
 
 	image.save_image("test.bmp");
 	
