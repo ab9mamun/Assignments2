@@ -33,8 +33,8 @@ void draw_light(Point reference_point) {
 		glColor3f(1.0, 1.0, 0); ///yellow color
 		glTranslatef(reference_point.x, reference_point.y, reference_point.z);
 		glutSolidSphere(2, 40, 40);
-		glPopMatrix();
 	}
+	glPopMatrix();
 }
 
 class Ray {
@@ -95,7 +95,7 @@ public:
 	}
 	virtual Vector getNormal(Point intersectionPoint) = 0;
 	Vector getReflection(Ray ray, Vector normal) {
-		Vector ref = 2 * ray.dir.dot(normal)*normal- ray.dir ;
+		Vector ref = ray.dir - 2 * ray.dir.dot(normal)*normal ;
 		return ref.normalize();
 	}
 
@@ -172,8 +172,24 @@ public:
 class GeneralQuadric: public Object {
 public:
     double a, b, c, d, e, f, g, h, i, j;
-    GeneralQuadric(double coeff[10], double len){
+    double width, height;
+    GeneralQuadric(double coeffs[10], Point ref_point, double length, double width, double height){
+        a = coeffs[0];
+        b = coeffs[1];
+        c = coeffs[2];
+        d = coeffs[3];
+        e = coeffs[4];
+        f = coeffs[5];
+        g = coeffs[6];
+        h = coeffs[7];
+        i = coeffs[8];
+        j = coeffs[9];
+        reference_point = ref_point;
+        this->length = length;
+        this->width = width;
+        this->height = height;
     }
+
 
 };
 
@@ -388,7 +404,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 			}
 		}
 
-		obscured = true;
+		//obscured = true;
 		if (!obscured) {
 
 			double lambert = max(0.0, Vector::dot(L.dir, normal));
@@ -461,7 +477,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 				objects[nearest]->intersect(refractionRay, ref_color, level + 1);
 
 				for (int c = 0; c<3; c++) {
-					current_color[c] += ref_color[c] * refIdx;
+					current_color[c] += ref_color[c] * 0.4;
 				}
 				for (int c = 0; c < 3; c++) {
 					current_color[c] = max(0.0, min(1.0, current_color[c]));  //set between 0 to 1
