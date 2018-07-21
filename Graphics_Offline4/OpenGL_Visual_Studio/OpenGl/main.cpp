@@ -22,6 +22,7 @@ vector<Point> lights;
 
 int slices;
 
+void draw_light(Point ref);
 
 void loadTestData() {
 	pos.set(20, -200, 20);
@@ -32,6 +33,7 @@ void loadTestData() {
 	window_width = window_height = 500;
 	
 	Object* temp;
+	temp = (Object*) new Sphere(Point(0,0,10), 10.0);
 	temp->setColor(1, 0, 0);
 	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	temp->setShine(1);
@@ -39,13 +41,20 @@ void loadTestData() {
 	Point light1(-50, 50, 50);
 	lights.push_back(light1);
 	
+	temp = (Object*) new Floor(1000, 20);
+	temp->setCoEfficients(0.4, 0.2, 0.2, 0.2);
+	temp->setShine(1);
 	objects.push_back(temp);
-	//obj.print();
+
 }
 
 void draw_everything() {
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->draw();
+	}
+	
+	for (int i = 0; i < lights.size(); i++) {
+		draw_light(lights[i]);
 	}
 	
 }

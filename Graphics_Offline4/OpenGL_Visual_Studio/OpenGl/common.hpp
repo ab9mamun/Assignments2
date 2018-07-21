@@ -28,4 +28,5 @@ void ASSERT(bool cond, const char* str) {
 	}
 }
 
+
 #endif //COMMON_HPP
