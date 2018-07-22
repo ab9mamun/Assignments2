@@ -144,9 +144,9 @@ void loadActualData() {
             scene>>shine;
             temp = (Object*) new GeneralQuadric(gen_coeffs, Point(buffer[0], buffer[1], buffer[2]), buffer[3], buffer[4], buffer[5]);
             temp->setColor(buffer[6], buffer[7], buffer[8]);
-            temp->setCoEfficients(buffer[9], buffer[10], buffer[11], buffer[13]);
+            temp->setCoEfficients(buffer[9], buffer[10], buffer[11], buffer[12]);
             temp->setShine(shine);
-            ///objects.push_back(temp); ///ignored willingly--
+            objects.push_back(temp); ///ignored willingly--
         }
 	}
 
@@ -159,6 +159,7 @@ void loadActualData() {
 
 	temp = (Object*) new Floor(1000, 20);
 	temp->setCoEfficients(0.6, 0.3, 0.3, 0.3);
+	temp->setColor(0.5, 0.5, 0.5);
 	temp->setShine(4);
 	objects.push_back(temp);
 
@@ -238,7 +239,7 @@ void capture() {
 
 	//cout << "Total pixels colored: " << pixels << " "<<objects[0]->pixels_covered<<endl;
 
-	image.save_image("test.bmp");
+	image.save_image("out.bmp");
 	cout << "Captured" << endl;
 }
 

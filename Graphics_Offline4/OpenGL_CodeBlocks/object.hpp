@@ -37,6 +37,12 @@ void draw_light(Point reference_point) {
 	glPopMatrix();
 }
 
+bool is_in(Point p, Point start, Point end_){
+    return p.x >= start.x && p.x < end_.x
+                && p.y >=start.y && p.y < end_.y
+                && p.z >= start.z && p.z < end_.z;
+}
+
 class Ray {
 public:
 	Point start;
@@ -57,7 +63,7 @@ public:
 	double color[3];
 	double co_efficients[4];
 	int pixels_covered;
-	double source_factor = 1.0, refIdx = 1.5;
+	double source_factor = 1.0, eta_ref = 1.5;
 	bool refraction_enabled = false;
 
 	Object() { pixels_covered = 0; }
@@ -101,6 +107,10 @@ public:
 	Vector  getRefraction(Ray ray, Vector normal);
 
 	void illuminati(Ray ray, Point intersectionPoint, double current_color[3], int level);
+
+	virtual Vector normal_preprocess(Vector dir, Vector normal){
+        return normal;
+	}
 };
 
 class Sphere: public Object{
@@ -160,6 +170,11 @@ public:
 
 	double getIntersectingT(Ray ray);
 	void draw();
+	Vector normal_preprocess(Vector dir, Vector normal){
+        if(dir.dot(normal) > 0) return -normal;  /// >0 = acute angle, ray and normal exits to the same direction of the plane
+                                                ///.. so, need to reverse the normal--
+        return normal;
+	}
 
 };
 
@@ -186,11 +201,9 @@ public:
 
     void draw(){}
 
-	double getIntersectingT(Ray ray){}
+	double getIntersectingT(Ray ray);
 
-	Vector getNormal(Point intersectionPoint) {
-		return (intersectionPoint - reference_point).normalize();
-	}
+	Vector getNormal(Point intersectionPoint);
 };
 
 
@@ -321,6 +334,67 @@ double Triangle::getIntersectingT(Ray ray) {
         return -1;
 }
 
+ Vector GeneralQuadric::getNormal(Point intersection) {
+
+    return Vector( 2 * a * intersection.x + d * intersection.y + f * intersection.z  + g,
+                2 * b * intersection.y + d * intersection.x + e * intersection.z  + h,
+                2 * c * intersection.z + e * intersection.y + f * intersection.x  + i).normalize();
+}
+
+double GeneralQuadric::getIntersectingT(Ray ray) {
+
+        double a1, b1, c1, d1;
+        double t1, t2;
+        bool t1in, t2in;
+        double x1, y1, z1, x2, y2, z2;
+
+        x1 = ray.start.x;
+        y1 = ray.start.y;
+        z1 = ray.start.z;
+        x2 = ray.dir.x;
+        y2 = ray.dir.y;
+        z2 = ray.dir.z;
+
+        a1 = a * x2 * x2 + b * y2 * y2 + c * z2*z2
+                    +d*x2*y2 + e*y2*z2 + f*z2*x2;
+
+        b1 = 2 * (a * x1 * x2 + b * y1*y2 + c * z1*z2)
+                    +d*(x1*y2+x2*y1) + e*(y1*z2 + y2*z1) + f*(z1*x2 + z2*x1)
+                    +g*x2 + h*y2 + i*z2;
+
+        c1 = a* x1*x1 + b*y1*y1 + c*z1*z2
+                    +d*x1*y1 + e*y1*z1 + f*z1*x1
+                    +g*x1 + h*y1 + i*z1 + j;
+
+
+        d1 = b1*b1 - 4*a1*c1;
+
+
+        if (d1 < 0) return -1;
+
+        t1 = (- b1 + sqrt(d1)) / (2.0*a1);
+        t2 = (- b1 - sqrt(d1)) / (2.0*a1);
+
+        Point p1, p2;
+        p1= ray.start + ray.dir * t1;
+        p2 = ray.start + ray.dir * t2;
+
+
+        Point start, end_;
+
+        start.set( reference_point.x, reference_point.y, reference_point.z);
+        end_.set(start.x + length, start.y + width, start.z + height);
+
+
+        t1in =  is_in(p1, start, end_) && (t1 > 0);
+        t2in = is_in(p2, start, end_) && (t2 >0);
+
+        if (t1in && t2in) return min(t1, t2);
+        if(t1in) return t1;
+        if(t2in) return t2;
+        return -1;
+}
+
 
 //************external variables--------------
 
@@ -349,25 +423,24 @@ double Object::intersect(Ray ray, double current_color[3], int level) {
 }
 
 Vector Object::getRefraction(Ray ray, Vector normal) {
-	Vector refraction(0, 0, 0);
+///https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
 
-	double dot = Vector::dot(normal, ray.dir);
-	double k = 1.0 - refIdx * refIdx * (1.0 - dot * dot);
+	double cosi = max(-1.0, min(1.0, Vector::dot(normal, ray.dir) ));
+	double k = 1.0 - eta_ref * eta_ref * (1.0 - cosi * cosi);
 
-	if (k >= 0) {
-		refraction = ray.dir * refIdx - normal * (refIdx * dot + sqrt(k));
-		refraction = refraction.normalize();
-	}
-
-	return refraction;
+	if(k<0) return Vector(0,0,0);
+    Vector refr = ray.dir * eta_ref - normal * (eta_ref * cosi + sqrt(k));
+    return refr.normalize();
 }
 
 
 void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3], int level) {
 
 	Vector normal = getNormal(intersectionPoint);
-	Vector reflection = getReflection(ray, normal);
-	Vector refraction = getRefraction(ray, normal);
+	normal = normal_preprocess(ray.dir, normal);
+    Vector reflection = getReflection(ray, normal);
+    Vector refraction = getRefraction(ray, normal);
+
 	double t, t_min;
 	bool obscured;
 
@@ -378,6 +451,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
         current_color[c] = colorAt[c]*co_efficients[AMBIENT];
 
 	for (int i = 0; i<lights.size(); i++) {
+
 
 		Vector dir = lights[i] - intersectionPoint;
 		double len = dir.length();
@@ -405,9 +479,10 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 			}
 		}
 
+
 		//obscured = false;
 		if (!obscured) {
-
+        ///https://stackoverflow.com/questions/15619830/raytracing-how-to-combine-diffuse-and-specular-color
 			double lambert = Vector::dot(L.dir, normal);
 			double phong =  -Vector::dot(reflection, -L.dir);
 
@@ -427,6 +502,10 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 		}
 
 
+
+
+
+        reflection = getReflection(ray, normal);
 		int nearest;
 		/**now time for reflection */
 
@@ -463,7 +542,7 @@ void Object::illuminati(Ray ray, Point intersectionPoint, double current_color[3
 			}
 
 			//end---
-			if (!refraction_enabled) return;
+			if (!refraction_enabled) continue;
 
 			start = intersectionPoint + refraction * 1.0;
 			Ray refractionRay(start, refraction);
