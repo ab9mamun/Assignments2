@@ -164,7 +164,7 @@ void drawRoboticArm() {
 
 	glRotatef(-armAroundX, 1, 0, 0);
 	glRotatef(-armAroundY, 0, 1, 0);
-	glTranslatef(0, 0, -25);
+	glTranslatef(0, 0, -30); //bugfix
 
 	glPushMatrix(); {
 		glScalef(10, 10, 30);
