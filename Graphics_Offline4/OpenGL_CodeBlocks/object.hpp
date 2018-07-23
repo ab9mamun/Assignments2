@@ -362,7 +362,7 @@ double GeneralQuadric::getIntersectingT(Ray ray) {
                     +d*(x1*y2+x2*y1) + e*(y1*z2 + y2*z1) + f*(z1*x2 + z2*x1)
                     +g*x2 + h*y2 + i*z2;
 
-        c1 = a* x1*x1 + b*y1*y1 + c*z1*z2
+        c1 = a* x1*x1 + b*y1*y1 + c*z1*z1
                     +d*x1*y1 + e*y1*z1 + f*z1*x1
                     +g*x1 + h*y1 + i*z1 + j;
 

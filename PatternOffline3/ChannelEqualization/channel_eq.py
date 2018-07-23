@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import scipy.stats
+import time
 
 def sep():
     print('============================================')
@@ -32,6 +33,7 @@ def process_bits(bits, n, W, noise_stddev):
 def main():
     np.random.seed(22)
 
+    start = time.time()
     with open('config.txt') as file:
         n, _ = file.readline().split()
         n = int(n)
@@ -160,6 +162,7 @@ def main():
     sep()
     print('Accuracy\t\t:\t\t{}%'.format(accuracy*100))
     sep()
+    print('Time taken\t\t:\t\t{}%'.format(time.time()-start))
 
 if __name__ == '__main__':
     main()

@@ -16,7 +16,7 @@
 	<cstdio>
 	<cmath>
 
-1532218991 source:f:\_git\assignments2\graphics_offline4\opengl_codeblocks\main.cpp
+1532219761 source:f:\_git\assignments2\graphics_offline4\opengl_codeblocks\main.cpp
 	"common.hpp"
 	"threed.hpp"
 	"object.hpp"
@@ -41,7 +41,7 @@
 	<cstdio>
 	<cmath>
 
-1532219436 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\object.hpp
+1532249465 f:\_git\assignments2\graphics_offline4\opengl_codeblocks\object.hpp
 	"common.hpp"
 	"threed.hpp"
 
